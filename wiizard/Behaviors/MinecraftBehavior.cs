@@ -15,6 +15,8 @@ namespace wiizard.Behaviors
 
         public string GetName() => "Minecraft";
 
+        public string GetDisplayName() => "Minecraft (ヌンチャク使用)";
+
         private VKCodes m_vkcodes = new VKCodes();
 
         private const double STICK_THD = 0.05;
@@ -42,11 +44,11 @@ namespace wiizard.Behaviors
 
                 if (Math.Abs(ws.NunchukState.Joystick.Y) >= STICK_THD)
                 {
-                    if (ws.NunchukState.Joystick.Y > 0 && ws.NunchukState.Joystick.Y >= DASH_THD && !isDash)
-                    {
-                        WinAPI.keybd_event(m_vkcodes["ctrl"], 0, 0, UIntPtr.Zero);
-                        isDash = true;
-                    }
+                    //if (ws.NunchukState.Joystick.Y > 0 && ws.NunchukState.Joystick.Y >= DASH_THD && !isDash)
+                    //{
+                    //    WinAPI.keybd_event(m_vkcodes["ctrl"], 0, 0, UIntPtr.Zero);
+                    //    isDash = true;
+                    //}
 
                     WinAPI.keybd_event(m_vkcodes[(ws.NunchukState.Joystick.Y > 0) ? "w" : "s"], 0, 0, UIntPtr.Zero);
                     isWalked_Y = true;
@@ -60,10 +62,10 @@ namespace wiizard.Behaviors
                     isDash = false;
                 }
 
-                if (ws.NunchukState.Joystick.Y <= -DASH_THD && Math.Abs(ws.NunchukState.Joystick.X) <= DASH_THD)
-                {
-                    WinAPI.keybd_event(m_vkcodes["ctrl"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                }
+                //if (ws.NunchukState.Joystick.Y <= -DASH_THD && Math.Abs(ws.NunchukState.Joystick.X) <= DASH_THD)
+                //{
+                //    WinAPI.keybd_event(m_vkcodes["ctrl"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
+                //}
 
             }
 

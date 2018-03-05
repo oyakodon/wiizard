@@ -216,8 +216,10 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.checkedListBox1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "DebugInfo";
             this.Text = "DebugInfo";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DebugInfo_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.picBox_IrWindow)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

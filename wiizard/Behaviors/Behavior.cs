@@ -16,5 +16,8 @@ namespace wiizard.Behaviors
 
         // Behaviorの名前 (json用)
         string GetName();
+
+        // 表示名
+        string GetDisplayName();
     }
 }

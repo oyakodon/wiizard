@@ -112,13 +112,13 @@ namespace wiizard
             switch (item)
             {
                 case WiimoteModel.ACC_X:
-                    return (ws.AccelState.Values.X, true);
+                    return (AdjustRange(ws.AccelState.Values.X, -1, 1, -0.5, 0.5), true);
                 case WiimoteModel.ACC_Y:
-                    return (ws.AccelState.Values.Y, true);
+                    return (AdjustRange(ws.AccelState.Values.Y, -1, 1, -0.5, 0.5), true);
                 case WiimoteModel.N_ACC_X:
-                    return ws.ExtensionType == ExtensionType.Nunchuk ? (ws.NunchukState.AccelState.Values.X, true) : invalid;
+                    return ws.ExtensionType == ExtensionType.Nunchuk ? (AdjustRange(ws.NunchukState.AccelState.Values.X, -1, 1, -0.5, 0.5), true) : invalid;
                 case WiimoteModel.N_ACC_Y:
-                    return ws.ExtensionType == ExtensionType.Nunchuk ? (ws.NunchukState.AccelState.Values.Y, true) : invalid;
+                    return ws.ExtensionType == ExtensionType.Nunchuk ? (AdjustRange(ws.NunchukState.AccelState.Values.Y, -1, 1, -0.5, 0.5), true) : invalid;
                 case WiimoteModel.N_STICK_X:
                     if (ws.ExtensionType == ExtensionType.Nunchuk)
                     {
@@ -127,7 +127,7 @@ namespace wiizard
                         {
                             value = 0;
                         }
-                        return (AdjustRange(value, -0.5, 0.5, 0, 1.0), true);
+                        return (value, true);
                     }
                     else
                     {
@@ -141,7 +141,7 @@ namespace wiizard
                         {
                             value = 0;
                         }
-                        return (AdjustRange(value, -0.5, 0.5, 0, 1.0), true);
+                        return (value, true);
                     }
                     else
                     {
@@ -153,7 +153,11 @@ namespace wiizard
                         if (count != 0)
                         {
                             var val = ws.IRState.IRSensors.Where(x => x.Found).Select(x => x.Position.X).Average();
-                            return (val, true);
+                            if (Math.Abs(val - 0.5) <= 0.05)
+                            {
+                                val = 0.5f;
+                            }
+                            return (val - 0.5, true);
                         }
                         else
                         {
@@ -166,7 +170,11 @@ namespace wiizard
                         if (count != 0)
                         {
                             var val = ws.IRState.IRSensors.Where(x => x.Found).Select(x => x.Position.Y).Average();
-                            return (val, true);
+                            if (Math.Abs(0.5 - val) <= 0.05)
+                            {
+                                val = 0.5f;
+                            }
+                            return (0.5 - val, true);
                         } else
                         {
                             return invalid;

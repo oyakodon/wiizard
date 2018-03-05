@@ -22,6 +22,34 @@ namespace wiizard
 
         public void MainForm_Load(object sender, EventArgs e)
         {
+            // Load profile.
+            var ofd = new OpenFileDialog();
+            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            ofd.Filter = "JSONファイル(*.json)|*.json|すべてのファイル(*.*)|*.*";
+            ofd.Title = "プロファイルを選択してください";
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                m_profile = Profile.Load(ofd.FileName);
+            }
+            else
+            {
+                Environment.Exit(1);
+            }
+
+            switch (m_profile.Behavior)
+            {
+                case "Minecraft":
+                    m_behavior = new MinecraftBehavior();
+                    break;
+                default:
+                    m_behavior = new StandardBehavior();
+                    break;
+            }
+
+            labProfileName.Text = m_profile.Name;
+            isRunning = true;
+
             m_wm = new Wiimote();
 
             try
@@ -43,10 +71,15 @@ namespace wiizard
                     m_wm.SetRumble(false);
                 });
 
-#if DEBUG
-                // デバッグ情報を表示
+                // デバッグ情報
                 m_debugInfo = new DebugInfo();
+                m_debugInfo.OnHiden = () =>
+                {
+                    MenuItem_debugInfo.Checked = false;
+                };
+#if DEBUG
                 m_debugInfo.Show();
+                MenuItem_debugInfo.Checked = true;
 #endif
 
             }
@@ -74,25 +107,27 @@ namespace wiizard
                     MessageBoxIcon.Error
                 );
 
-                Application.Exit();
+                Environment.Exit(1);
             }
-
-            // Load profile.
-            string json;
-            using (var sr = new StreamReader(@"C:\Users\Riku\Desktop\default.json", System.Text.Encoding.UTF8))
-            {
-                json = sr.ReadToEnd();
-            }
-
-            m_loadedProfile = JsonConvert.DeserializeObject<Profile>(json);
-
-            m_behavior = new MinecraftBehavior();
 
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             m_wm.Disconnect();
+        }
+
+        private void MenuItem_debugInfo_Click(object sender, EventArgs e)
+        {
+            MenuItem_debugInfo.Checked = !MenuItem_debugInfo.Checked;
+            if (MenuItem_debugInfo.Checked)
+            {
+                m_debugInfo.Show();
+            }
+            else
+            {
+                m_debugInfo.Hide();
+            }
         }
 
         private Wiimote m_wm;
@@ -102,8 +137,11 @@ namespace wiizard
         private WiimoteState prevState = new WiimoteState(); // 直前の状態
         private VKCodes m_vkcodes = new VKCodes();
         private DebugInfo m_debugInfo;
-        private Profile m_loadedProfile;
+        private Profile m_profile;
         private Behavior m_behavior;
+
+        private bool isRunning = false;
+        private const string VERSION = "BETA 0.1.0";
 
         private void UpdateWiimoteChanged(WiimoteChangedEventArgs args)
         {
@@ -111,60 +149,52 @@ namespace wiizard
 
             m_debugInfo.Update(ws);
 
-            // Profileに設定されている動作を実行
-            foreach (WiimoteModel item in m_loadedProfile.Assignments.Keys)
+            if (isRunning)
             {
-                if (item.isButton())
+                // Profileに設定されている動作を実行
+                foreach (WiimoteModel item in m_profile.Assignments.Keys)
                 {
-                    var action = m_loadedProfile.Assignments[item];
-                    bool inc = false;
-                    bool inv = false;
+                    if (item.isButton())
+                    {
+                        var action = m_profile.Assignments[item];
 
-                    if (action.EndsWith("_INC"))
-                    {
-                        action = action.Replace("_INC", "");
-                        inc = true;
-                    }
-                    if (action.EndsWith("_INV"))
-                    {
-                        action = action.Replace("_INV", "");
-                        inv = true;
-                    }
-
-                    if (inc)
-                    {
-                        if (item.GetState(ws))
+                        if (action.EndsWith("_INC"))
                         {
-                            m_debugInfo.LogWriteLine(item + " pressing.");
-                            ProcessButtonAction(action, inverted: inv);
+                            if (item.GetState(ws))
+                            {
+                                m_debugInfo.LogWriteLine(item + " pressing.");
+                                action = action.Replace("_INC", "");
+                                ProcessButtonAction(action);
+                            }
+                        }
+                        else
+                        {
+                            if (!item.GetState(prevState) && item.GetState(ws))
+                            {
+                                m_debugInfo.LogWriteLine(item + " pressed.");
+                                ProcessButtonAction(action);
+                            }
+                            if (item.GetState(prevState) && !item.GetState(ws))
+                            {
+                                m_debugInfo.LogWriteLine(item + " released.");
+                                ProcessButtonAction(action, released: true);
+                            }
                         }
                     }
                     else
                     {
-                        if (!item.GetState(prevState) && item.GetState(ws))
+                        var value = item.GetValue(ws);
+                        var prevValue = item.GetValue(prevState);
+                        if (value.Item2 && prevValue.Item2)
                         {
-                            m_debugInfo.LogWriteLine(item + " pressed.");
-                            ProcessButtonAction(action, inverted: inv);
-                        }
-                        if (item.GetState(prevState) && !item.GetState(ws))
-                        {
-                            m_debugInfo.LogWriteLine(item + " released.");
-                            ProcessButtonAction(action, inverted: inv, released: true);
+                            ProcessAxisAction(m_profile.Assignments[item], value.Item1, prevValue.Item1);
                         }
                     }
                 }
-                else
-                {
-                    var value = item.GetValue(ws);
-                    if (value.Item2)
-                    {
-                        ProcessAxisAction(m_loadedProfile.Assignments[item], value.Item1);
-                    }
-                }
-            }
 
-            // Behavior固有の処理を実行
-            m_behavior.Update(ws, prevState);
+                // Behavior固有の処理を実行
+                m_behavior.Update(ws, prevState);
+            }
 
             // 状態を保持
             prevState = DeepCopy(ws);
@@ -196,8 +226,16 @@ namespace wiizard
         /// <summary>
         /// 指定されたactionに基づく動作を実行します。
         /// </summary>
-        private void ProcessButtonAction(string action, bool inverted = false, bool released = false)
+        private void ProcessButtonAction(string action, bool released = false)
         {
+            bool inverted = false;
+
+            if (action.EndsWith("_INV"))
+            {
+                action = action.Replace("_INV", "");
+                inverted = true;
+            }
+
             switch (action)
             {
                 case "M_LCLICK":
@@ -225,26 +263,35 @@ namespace wiizard
             }
         }
 
-        private void ProcessAxisAction(string action, double value)
+        private void ProcessAxisAction(string action, double value, double prevValue)
         {
             switch (action)
             {
                 case "MOUSE_X":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, (int)((value - 0.5) * 20), 0, 0, 0);
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, (int)(value * 20), 0, 0, 0);
                     break;
                 case "MOUSE_Y":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, 0, (int)((0.5 - value) * 20), 0, 0);
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, 0, (int)(value * 20), 0, 0);
                     break;
                 case "MOUSE_WHEEL":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_WHEEL, 0, 0, (int)((0.5 - value) * 20), 0);
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_WHEEL, 0, 0, (int)(value * 20), 0);
                     break;
                 default:
-                    ProcessButtonAction(action, released: (value < 0.5));
+                    if (Math.Abs(value) > 0.05)
+                    {
+                        // press
+                        ProcessButtonAction(action);
+                    }
+                    else if (Math.Abs(prevValue) > 0.05)
+                    {
+                        //release
+                        ProcessButtonAction(action, released: true);
+                    }
                     break;
             }
-            
+
         }
-        
+
         /// <summary>
         /// クラスオブジェクトをディープコピーします。
         /// (For cloning WiimoteState)
@@ -253,7 +300,7 @@ namespace wiizard
         private static T DeepCopy<T>(T target)
         {
             T result;
-            
+
             using (var mem = new MemoryStream())
             {
                 var b = new BinaryFormatter();
@@ -265,6 +312,28 @@ namespace wiizard
             return result;
         }
 
+        private void btnToggleMode_Click(object sender, EventArgs e)
+        {
+            isRunning = !isRunning;
+            if (isRunning)
+            {
+                btnToggleMode.Text = "停止(&S)";
+            }
+            else
+            {
+                btnToggleMode.Text = "開始(&R)";
+            }
+        }
+
+        private void MenuItem_Readme_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/oyakodon/wiizard/tree/master/README.md");
+        }
+
+        private void MenuItem_Version_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("< Wiizard >\n\nVer. " + VERSION + "\n\n作者: Oyakodon\n(https://github.com/oyakodon/)", "バージョン情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
     }
 
 }

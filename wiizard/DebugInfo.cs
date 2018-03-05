@@ -1,6 +1,7 @@
-﻿using System.Windows.Forms;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 using WiimoteLib;
 using System.Drawing;
@@ -17,6 +18,8 @@ namespace wiizard
         private bool irDetected = false;
         private List<System.Drawing.PointF> irPoints = new List<System.Drawing.PointF>();
         private System.Drawing.PointF averagedIrPoint;
+
+        public Action OnHiden;
 
         public void Update(WiimoteState ws)
         {
@@ -148,6 +151,13 @@ namespace wiizard
             }
 
             g.Dispose();
+        }
+
+        private void DebugInfo_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            this.Hide();
+            OnHiden();
         }
     }
 }
