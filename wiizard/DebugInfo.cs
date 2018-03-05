@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using WiimoteLib;
+using System.Drawing;
 
 namespace wiizard
 {
@@ -13,8 +14,41 @@ namespace wiizard
             InitializeComponent();
         }
 
+        private bool irDetected = false;
+        private List<System.Drawing.PointF> irPoints = new List<System.Drawing.PointF>();
+        private System.Drawing.PointF averagedIrPoint;
+
         public void Update(WiimoteState ws)
         {
+            if (this.IsDisposed)
+            {
+                return;
+            }
+
+            // 赤外線
+            var count = ws.IRState.IRSensors.Count(s => s.Found);
+            irDetected = (count != 0);
+            labIrStat.Text = irDetected ? "Detected" : "Not Detected";
+            labIrCount.Text = count.ToString();
+            if (irDetected)
+            {
+                irPoints.Clear();
+                float sum_x = 0, sum_y = 0;
+                foreach (var ir in ws.IRState.IRSensors)
+                {
+                    if (ir.Found)
+                    {
+                        irPoints.Add(new System.Drawing.PointF(ir.Position.X, ir.Position.Y));
+
+                        sum_x += ir.Position.X;
+                        sum_y += ir.Position.Y;
+                    }
+                }
+
+                averagedIrPoint = new System.Drawing.PointF( sum_x / count, sum_y / count );
+            }
+            UpdateIRWindow();
+
             // ボタンの状態
             var buttonStateDic = GetDictionaryFromButton(ws);
 
@@ -23,17 +57,23 @@ namespace wiizard
                 checkedListBox1.SetItemCheckState(i, buttonStateDic[(string)checkedListBox1.Items[i]] ? CheckState.Checked : CheckState.Unchecked);
             }
 
-            // 加速度
+            // 加速度・ジョイスティック
             labAcc.Text = AccToString(ws.AccelState.Values.X, ws.AccelState.Values.Y, ws.AccelState.Values.Z);
 
             if (ws.ExtensionType == ExtensionType.Nunchuk)
             {
                 labNunchukAcc.Text = AccToString(ws.NunchukState.AccelState.Values.X, ws.NunchukState.AccelState.Values.Y, ws.NunchukState.AccelState.Values.Z);
+                labNunchukStick.Text = ws.NunchukState.Joystick.X.ToString("0.000") + "/" + ws.NunchukState.Joystick.Y.ToString("0.000");
             }
 
             // バッテリー残量
             labBattery.Text = ws.Battery.ToString("00") + "%";
 
+        }
+
+        public void LogWriteLine(string log)
+        {
+            listBox_log.Items.Insert(0, string.Format("[{0}] {1}", System.DateTime.Now, log));
         }
 
         private Dictionary<string, bool> GetDictionaryFromButton(WiimoteState ws)
@@ -74,5 +114,40 @@ namespace wiizard
             return $"{x}/{y}/{z}";
         }
 
+        private delegate void UpdateIRWindowDelegate();
+        private Brush[] irColors = { Brushes.Red, Brushes.Blue, Brushes.Green, Brushes.Yellow };
+
+        private void UpdateIRWindow()
+        {
+            if (InvokeRequired)
+            {
+                // 別スレッドから呼び出された場合
+                Invoke(new UpdateIRWindowDelegate(UpdateIRWindow), irPoints);
+                return;
+            }
+
+            Graphics g = picBox_IrWindow.CreateGraphics();
+            g.Clear(Color.Black);
+
+            for (var i = 0; i < irPoints.Count; i++)
+            {
+                g.FillEllipse(
+                    irColors[i],
+                    irPoints[i].X * picBox_IrWindow.Width,
+                    irPoints[i].Y * picBox_IrWindow.Height, 10, 10
+                );
+            }
+
+            if (irDetected)
+            {
+                g.FillEllipse(
+                    Brushes.DeepPink,
+                    averagedIrPoint.X * picBox_IrWindow.Width,
+                    averagedIrPoint.Y * picBox_IrWindow.Height, 10, 10
+                );
+            }
+
+            g.Dispose();
+        }
     }
 }

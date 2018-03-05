@@ -17,15 +17,20 @@ namespace wiizard
                 json = sr.ReadToEnd();
             }
 
-            m_vkcodes = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+            vkcodes_dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        }
+
+        public bool Contains(string code)
+        {
+            return vkcodes_dic.ContainsKey(code);
         }
 
         public byte this[string code]
         {
-            get { return Convert.ToByte(m_vkcodes[code], 16); }
+            get { return Convert.ToByte(vkcodes_dic[code], 16); }
         }
 
-        private Dictionary<string, string> m_vkcodes;
+        private Dictionary<string, string> vkcodes_dic;
 
     }
 }

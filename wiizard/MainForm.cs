@@ -2,8 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Collections.Generic;
+
+using wiizard.Behaviors;
 
 using WiimoteLib;
+using Newtonsoft.Json;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace wiizard
 {
@@ -16,8 +22,6 @@ namespace wiizard
 
         public void MainForm_Load(object sender, EventArgs e)
         {
-            m_vkcodes = new VKCodes();
-
             m_wm = new Wiimote();
 
             try
@@ -72,6 +76,18 @@ namespace wiizard
 
                 Application.Exit();
             }
+
+            // Load profile.
+            string json;
+            using (var sr = new StreamReader(@"C:\Users\Riku\Desktop\default.json", System.Text.Encoding.UTF8))
+            {
+                json = sr.ReadToEnd();
+            }
+
+            m_loadedProfile = JsonConvert.DeserializeObject<Profile>(json);
+
+            m_behavior = new MinecraftBehavior();
+
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -82,15 +98,78 @@ namespace wiizard
         private Wiimote m_wm;
         private delegate void UpdateWiimoteStateDelegate(WiimoteChangedEventArgs args);
         private delegate void UpdateExtensionChangedDelegate(WiimoteExtensionChangedEventArgs args);
-        private WiimoteLib.ButtonState previousBtns = new WiimoteLib.ButtonState(); // 直前のボタンの状態
-        private NunchukState previousNunchuk = new WiimoteLib.NunchukState(); // 直前のヌンチャクの状態
 
+        private WiimoteState prevState = new WiimoteState(); // 直前の状態
+        private VKCodes m_vkcodes = new VKCodes();
         private DebugInfo m_debugInfo;
-        private VKCodes m_vkcodes;
+        private Profile m_loadedProfile;
+        private Behavior m_behavior;
 
-        private bool isDash = false;
-        private bool isWalked_X = false;
-        private bool isWalked_Y = false;
+        private void UpdateWiimoteChanged(WiimoteChangedEventArgs args)
+        {
+            var ws = args.WiimoteState;
+
+            m_debugInfo.Update(ws);
+
+            // Profileに設定されている動作を実行
+            foreach (WiimoteModel item in m_loadedProfile.Assignments.Keys)
+            {
+                if (item.isButton())
+                {
+                    var action = m_loadedProfile.Assignments[item];
+                    bool inc = false;
+                    bool inv = false;
+
+                    if (action.EndsWith("_INC"))
+                    {
+                        action = action.Replace("_INC", "");
+                        inc = true;
+                    }
+                    if (action.EndsWith("_INV"))
+                    {
+                        action = action.Replace("_INV", "");
+                        inv = true;
+                    }
+
+                    if (inc)
+                    {
+                        if (item.GetState(ws))
+                        {
+                            m_debugInfo.LogWriteLine(item + " pressing.");
+                            ProcessButtonAction(action, inverted: inv);
+                        }
+                    }
+                    else
+                    {
+                        if (!item.GetState(prevState) && item.GetState(ws))
+                        {
+                            m_debugInfo.LogWriteLine(item + " pressed.");
+                            ProcessButtonAction(action, inverted: inv);
+                        }
+                        if (item.GetState(prevState) && !item.GetState(ws))
+                        {
+                            m_debugInfo.LogWriteLine(item + " released.");
+                            ProcessButtonAction(action, inverted: inv, released: true);
+                        }
+                    }
+                }
+                else
+                {
+                    var value = item.GetValue(ws);
+                    if (value.Item2)
+                    {
+                        ProcessAxisAction(m_loadedProfile.Assignments[item], value.Item1);
+                    }
+                }
+            }
+
+            // Behavior固有の処理を実行
+            m_behavior.Update(ws, prevState);
+
+            // 状態を保持
+            prevState = DeepCopy(ws);
+
+        }
 
         public void UpdateState(WiimoteChangedEventArgs args)
         {
@@ -100,106 +179,6 @@ namespace wiizard
         public void UpdateExtension(WiimoteExtensionChangedEventArgs args)
         {
             BeginInvoke(new UpdateExtensionChangedDelegate(UpdateExtensionChanged), args);
-        }
-
-        private void UpdateWiimoteChanged(WiimoteChangedEventArgs args)
-        {
-            WiimoteState ws = args.WiimoteState;
-
-            m_debugInfo.Update(ws);
-
-            if (ws.ExtensionType == ExtensionType.Nunchuk)
-            {
-                // toolStripStatusLabel2.Text = string.Format("({0}, {1})", ws.NunchukState.Joystick.X, ws.NunchukState.Joystick.Y);
-
-                // 移動キー
-                const double STICK_THD = 0.05;
-                const double DASH_THD = 0.25;
-
-                if (Math.Abs(ws.NunchukState.Joystick.X) >= STICK_THD)
-                {
-                    WinAPI.keybd_event(m_vkcodes[(ws.NunchukState.Joystick.X > 0) ? "d" : "a"], 0, 0, UIntPtr.Zero);
-                    isWalked_X = true;
-                }
-                else if (isWalked_X)
-                {
-                    WinAPI.keybd_event(m_vkcodes["a"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                    WinAPI.keybd_event(m_vkcodes["d"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                    isWalked_X = false;
-                }
-
-                if (Math.Abs(ws.NunchukState.Joystick.Y) >= STICK_THD)
-                {
-                    if (ws.NunchukState.Joystick.Y > 0 && ws.NunchukState.Joystick.Y >= DASH_THD && !isDash)
-                    {
-                        WinAPI.keybd_event(m_vkcodes["ctrl"], 0, 0, UIntPtr.Zero);
-                        isDash = true;
-                    }
-
-                    WinAPI.keybd_event(m_vkcodes[(ws.NunchukState.Joystick.Y > 0) ? "w" : "s"], 0, 0, UIntPtr.Zero);
-                    isWalked_Y = true;
-
-                }
-                else if (isWalked_Y)
-                {
-                    WinAPI.keybd_event(m_vkcodes["w"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                    WinAPI.keybd_event(m_vkcodes["s"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                    isWalked_Y = false;
-                    isDash = false;
-                }
-
-                if (ws.NunchukState.Joystick.Y <= -DASH_THD && Math.Abs(ws.NunchukState.Joystick.X) <= DASH_THD)
-                {
-                    WinAPI.keybd_event(m_vkcodes["ctrl"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                }
-
-                if (!previousNunchuk.Z && ws.NunchukState.Z)
-                {
-                    WinAPI.keybd_event(m_vkcodes["spacebar"], 0, 0, UIntPtr.Zero);
-                    System.Threading.Thread.Sleep(100);
-                    WinAPI.keybd_event(m_vkcodes["spacebar"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                }
-
-                if (ws.NunchukState.C)
-                {
-                    WinAPI.keybd_event(m_vkcodes["left_shift"], 0, 0, UIntPtr.Zero);
-                }
-
-                if (previousNunchuk.C && !ws.NunchukState.C)
-                {
-                    WinAPI.keybd_event(m_vkcodes["left_shift"], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
-                }
-
-                previousNunchuk = ws.NunchukState;
-
-            }
-
-            if (!previousBtns.A && ws.ButtonState.A)
-            {
-                WinAPI.mouse_event(WinAPI.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-            }
-
-            if (previousBtns.A && !ws.ButtonState.A)
-            {
-                WinAPI.mouse_event(WinAPI.MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-            }
-
-            if (!previousBtns.B && ws.ButtonState.B)
-            {
-                WinAPI.mouse_event(WinAPI.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
-            }
-
-            if (previousBtns.B && !ws.ButtonState.B)
-            {
-                WinAPI.mouse_event(WinAPI.MOUSEEVENTF_RIGHTUP, 0, 0, 0, 0);
-            }
-
-            // ボタンの状態を保持
-            previousBtns = ws.ButtonState;
-
-            // バッテリー残量
-            // tsProgressBar_battery.Value = (ws.Battery > 0xc8 ? 0xc8 : (int)ws.Battery);
-            // tsStatLab_battery.Text = Math.Floor(ws.Battery) + "%";
         }
 
         private void UpdateExtensionChanged(WiimoteExtensionChangedEventArgs args)
@@ -212,6 +191,78 @@ namespace wiizard
             {
                 m_wm.SetReportType(InputReport.IRAccel, true);
             }
+        }
+
+        /// <summary>
+        /// 指定されたactionに基づく動作を実行します。
+        /// </summary>
+        private void ProcessButtonAction(string action, bool inverted = false, bool released = false)
+        {
+            switch (action)
+            {
+                case "M_LCLICK":
+                    WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_LEFTUP : WinAPI.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                    break;
+                case "M_RCLICK":
+                    WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_RIGHTUP : WinAPI.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+                    break;
+                case "MOUSE_X":
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, inverted ? -10 : 10, 0, 0, 0);
+                    break;
+                case "MOUSE_Y":
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, 0, inverted ? -10 : 10, 0, 0);
+                    break;
+                case "MOUSE_WHEEL":
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_WHEEL, 0, 0, inverted ? -20 : 20, 0);
+                    break;
+                default:
+                    if (m_vkcodes.Contains(action))
+                    {
+                        WinAPI.keybd_event(m_vkcodes[action], 0, released ? WinAPI.KEYEVENTF_KEYUP : 0, UIntPtr.Zero);
+                    }
+
+                    break;
+            }
+        }
+
+        private void ProcessAxisAction(string action, double value)
+        {
+            switch (action)
+            {
+                case "MOUSE_X":
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, (int)((value - 0.5) * 20), 0, 0, 0);
+                    break;
+                case "MOUSE_Y":
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, 0, (int)((0.5 - value) * 20), 0, 0);
+                    break;
+                case "MOUSE_WHEEL":
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_WHEEL, 0, 0, (int)((0.5 - value) * 20), 0);
+                    break;
+                default:
+                    ProcessButtonAction(action, released: (value < 0.5));
+                    break;
+            }
+            
+        }
+        
+        /// <summary>
+        /// クラスオブジェクトをディープコピーします。
+        /// (For cloning WiimoteState)
+        /// http://l-s-d.sakura.ne.jp/2016/04/class_obj_copy/
+        /// </summary>
+        private static T DeepCopy<T>(T target)
+        {
+            T result;
+            
+            using (var mem = new MemoryStream())
+            {
+                var b = new BinaryFormatter();
+                b.Serialize(mem, target);
+                mem.Position = 0;
+                result = (T)b.Deserialize(mem);
+            }
+
+            return result;
         }
 
     }

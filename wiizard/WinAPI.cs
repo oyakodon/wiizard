@@ -215,9 +215,9 @@ namespace wiizard
         public const uint WM_KEYUP = 0x101;
 
         // このフラグをセットすると、スキャンコードにプリフィックスバイト 0xE0（224）を追加します。
-        public const int KEYEVENTF_EXTENDEDKEY = 1;
+        public const uint KEYEVENTF_EXTENDEDKEY = 1;
         // このフラグをセットすると、キーを離す操作になります。セットしない場合、キーを押す操作になります。
-        public const int KEYEVENTF_KEYUP = 2;
+        public const uint KEYEVENTF_KEYUP = 2;
 
     }
 }

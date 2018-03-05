@@ -1,13 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using WiimoteLib;
 
 namespace wiizard.Behaviors
 {
+    // 標準の挙動
     public class StandardBehavior : Behavior
     {
-        public override void Update(WiimoteState ws)
+        public List<WiimoteModel> GetDisabledItem() => new List<WiimoteModel>();
+
+        public string GetName() => "Standard";
+
+        public void Update(WiimoteState ws, WiimoteState prev)
         {
-            
+            // Do Nothing.
         }
+
     }
 }
