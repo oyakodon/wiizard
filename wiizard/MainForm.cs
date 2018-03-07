@@ -24,31 +24,19 @@ namespace wiizard
         {
             // Load profile.
             var ofd = new OpenFileDialog();
-            ofd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            ofd.InitialDirectory = Environment.CurrentDirectory;
             ofd.Filter = "JSONファイル(*.json)|*.json|すべてのファイル(*.*)|*.*";
             ofd.Title = "プロファイルを選択してください";
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                m_profile = Profile.Load(ofd.FileName);
+                m_profilePath = ofd.FileName;
+                LoadProfile();
             }
             else
             {
                 Environment.Exit(1);
             }
-
-            switch (m_profile.Behavior)
-            {
-                case "Minecraft":
-                    m_behavior = new MinecraftBehavior();
-                    break;
-                default:
-                    m_behavior = new StandardBehavior();
-                    break;
-            }
-
-            labProfileName.Text = m_profile.Name;
-            isRunning = true;
 
             m_wm = new Wiimote();
 
@@ -140,8 +128,29 @@ namespace wiizard
         private Profile m_profile;
         private Behavior m_behavior;
 
-        private bool isRunning = false;
+        private bool m_isRunning = false;
+        private string m_profilePath;
         private const string VERSION = "BETA 0.1.0";
+
+        private void LoadProfile()
+        {
+            m_isRunning = false;
+
+            m_profile = Profile.Load(m_profilePath);
+
+            switch (m_profile.Behavior)
+            {
+                case "Minecraft":
+                    m_behavior = new MinecraftBehavior();
+                    break;
+                default:
+                    m_behavior = new StandardBehavior();
+                    break;
+            }
+
+            labProfileName.Text = m_profile.Name;
+            m_isRunning = true;
+        }
 
         private void UpdateWiimoteChanged(WiimoteChangedEventArgs args)
         {
@@ -149,7 +158,7 @@ namespace wiizard
 
             m_debugInfo.Update(ws);
 
-            if (isRunning)
+            if (m_isRunning)
             {
                 // Profileに設定されている動作を実行
                 foreach (WiimoteModel item in m_profile.Assignments.Keys)
@@ -314,8 +323,8 @@ namespace wiizard
 
         private void btnToggleMode_Click(object sender, EventArgs e)
         {
-            isRunning = !isRunning;
-            if (isRunning)
+            m_isRunning = !m_isRunning;
+            if (m_isRunning)
             {
                 btnToggleMode.Text = "停止(&S)";
             }
@@ -333,6 +342,11 @@ namespace wiizard
         private void MenuItem_Version_Click(object sender, EventArgs e)
         {
             MessageBox.Show("< Wiizard >\n\nVer. " + VERSION + "\n\n作者: Oyakodon\n(https://github.com/oyakodon/)", "バージョン情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void MenuItem_reloadProfile_Click(object sender, EventArgs e)
+        {
+            LoadProfile();
         }
     }
 

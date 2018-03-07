@@ -31,12 +31,13 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuItem_File = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_debugInfo = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_Readme = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_Version = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.labProfileName = new System.Windows.Forms.Label();
             this.btnToggleMode = new System.Windows.Forms.Button();
-            this.MenuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItem_Version = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItem_Readme = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_reloadProfile = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -54,7 +55,8 @@
             // MenuItem_File
             // 
             this.MenuItem_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItem_debugInfo});
+            this.MenuItem_debugInfo,
+            this.MenuItem_reloadProfile});
             this.MenuItem_File.Name = "MenuItem_File";
             this.MenuItem_File.Size = new System.Drawing.Size(67, 20);
             this.MenuItem_File.Text = "ファイル(&F)";
@@ -62,9 +64,32 @@
             // MenuItem_debugInfo
             // 
             this.MenuItem_debugInfo.Name = "MenuItem_debugInfo";
-            this.MenuItem_debugInfo.Size = new System.Drawing.Size(150, 22);
+            this.MenuItem_debugInfo.Size = new System.Drawing.Size(187, 22);
             this.MenuItem_debugInfo.Text = "デバッグ情報(&D)";
             this.MenuItem_debugInfo.Click += new System.EventHandler(this.MenuItem_debugInfo_Click);
+            // 
+            // MenuItem_Help
+            // 
+            this.MenuItem_Help.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItem_Readme,
+            this.MenuItem_Version});
+            this.MenuItem_Help.Name = "MenuItem_Help";
+            this.MenuItem_Help.Size = new System.Drawing.Size(65, 20);
+            this.MenuItem_Help.Text = "ヘルプ(&H)";
+            // 
+            // MenuItem_Readme
+            // 
+            this.MenuItem_Readme.Name = "MenuItem_Readme";
+            this.MenuItem_Readme.Size = new System.Drawing.Size(157, 22);
+            this.MenuItem_Readme.Text = "Readme.md";
+            this.MenuItem_Readme.Click += new System.EventHandler(this.MenuItem_Readme_Click);
+            // 
+            // MenuItem_Version
+            // 
+            this.MenuItem_Version.Name = "MenuItem_Version";
+            this.MenuItem_Version.Size = new System.Drawing.Size(157, 22);
+            this.MenuItem_Version.Text = "バージョン情報(&V)";
+            this.MenuItem_Version.Click += new System.EventHandler(this.MenuItem_Version_Click);
             // 
             // label1
             // 
@@ -94,28 +119,12 @@
             this.btnToggleMode.UseVisualStyleBackColor = true;
             this.btnToggleMode.Click += new System.EventHandler(this.btnToggleMode_Click);
             // 
-            // MenuItem_Help
+            // MenuItem_reloadProfile
             // 
-            this.MenuItem_Help.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItem_Readme,
-            this.MenuItem_Version});
-            this.MenuItem_Help.Name = "MenuItem_Help";
-            this.MenuItem_Help.Size = new System.Drawing.Size(65, 20);
-            this.MenuItem_Help.Text = "ヘルプ(&H)";
-            // 
-            // MenuItem_Version
-            // 
-            this.MenuItem_Version.Name = "MenuItem_Version";
-            this.MenuItem_Version.Size = new System.Drawing.Size(157, 22);
-            this.MenuItem_Version.Text = "バージョン情報(&V)";
-            this.MenuItem_Version.Click += new System.EventHandler(this.MenuItem_Version_Click);
-            // 
-            // MenuItem_Readme
-            // 
-            this.MenuItem_Readme.Name = "MenuItem_Readme";
-            this.MenuItem_Readme.Size = new System.Drawing.Size(157, 22);
-            this.MenuItem_Readme.Text = "Readme.md";
-            this.MenuItem_Readme.Click += new System.EventHandler(this.MenuItem_Readme_Click);
+            this.MenuItem_reloadProfile.Name = "MenuItem_reloadProfile";
+            this.MenuItem_reloadProfile.Size = new System.Drawing.Size(187, 22);
+            this.MenuItem_reloadProfile.Text = "プロファイルの再読込(&R)";
+            this.MenuItem_reloadProfile.Click += new System.EventHandler(this.MenuItem_reloadProfile_Click);
             // 
             // MainForm
             // 
@@ -150,6 +159,7 @@
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Help;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Readme;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Version;
+        private System.Windows.Forms.ToolStripMenuItem MenuItem_reloadProfile;
     }
 }
 
