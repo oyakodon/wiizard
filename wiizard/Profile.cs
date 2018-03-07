@@ -45,7 +45,15 @@ namespace wiizard
             {
                 json = sr.ReadToEnd();
             }
-            return JsonConvert.DeserializeObject<Profile>(json);
+            var profile = JsonConvert.DeserializeObject<Profile>(json);
+
+            // 構文チェック
+            if (profile.Assignments == null || profile.Behavior == null || profile.Name == null)
+            {
+                throw new System.FormatException("JSONの構文に誤りがあるか, 必要な項目を満たしていません.");
+            }
+
+            return profile;
         }
 
     }

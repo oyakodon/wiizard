@@ -30,8 +30,16 @@ namespace wiizard
 
             if (ofd.ShowDialog() == DialogResult.OK)
             {
-                m_profilePath = ofd.FileName;
-                LoadProfile();
+                // ファイル変更の検知
+                m_fileSystemWatcher.Path = Path.GetDirectoryName(ofd.FileName);
+                m_fileSystemWatcher.Filter = Path.GetFileName(ofd.FileName);
+                m_fileSystemWatcher.SynchronizingObject = this;
+                m_fileSystemWatcher.NotifyFilter = NotifyFilters.LastAccess;
+                m_fileSystemWatcher.Changed += m_fileSystemWatcher_Changed;
+                m_fileSystemWatcher.EnableRaisingEvents = true;　//監視を開始
+
+                // プロファイルの読み込み
+                LoadProfile(ofd.FileName);
             }
             else
             {
@@ -129,27 +137,54 @@ namespace wiizard
         private Behavior m_behavior;
 
         private bool m_isRunning = false;
+        private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
+        private const string VERSION = "BETA 0.2.0";
+
         private string m_profilePath;
-        private const string VERSION = "BETA 0.1.0";
 
         private void LoadProfile()
         {
+            LoadProfile(m_profilePath);
+        }
+
+        private void LoadProfile(string profilePath)
+        {
+            m_profilePath = profilePath;
+
             m_isRunning = false;
 
-            m_profile = Profile.Load(m_profilePath);
+            Thread.Sleep(100); // ファイルアクセス衝突防止
 
-            switch (m_profile.Behavior)
+            try
             {
-                case "Minecraft":
-                    m_behavior = new MinecraftBehavior();
-                    break;
-                default:
-                    m_behavior = new StandardBehavior();
-                    break;
+                m_profile = Profile.Load(profilePath);
+
+                switch (m_profile.Behavior)
+                {
+                    case "Minecraft":
+                        m_behavior = new MinecraftBehavior();
+                        break;
+                    default:
+                        m_behavior = new StandardBehavior();
+                        break;
+                }
+
+                labProfileName.Text = m_profile.Name;
+                m_isRunning = true;
+
+            } catch (Exception ex)
+            {
+                MessageBox.Show("重大なエラーが発生しました。\n終了します。\n\nエラー内容: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                Environment.Exit(1);
             }
 
-            labProfileName.Text = m_profile.Name;
-            m_isRunning = true;
+        }
+
+        private void m_fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            labStat.Text = "プロファイルの変更を適用しました. (" + DateTime.Now.ToShortTimeString() + ")";
+            System.Media.SystemSounds.Asterisk.Play();
+            LoadProfile(e.FullPath);
         }
 
         private void UpdateWiimoteChanged(WiimoteChangedEventArgs args)
@@ -347,6 +382,13 @@ namespace wiizard
         private void MenuItem_reloadProfile_Click(object sender, EventArgs e)
         {
             LoadProfile();
+            MessageBox.Show("プロファイルは正常に再読み込みされました。", "Wiizard", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void MenuItem_autoReload_Click(object sender, EventArgs e)
+        {
+            m_fileSystemWatcher.EnableRaisingEvents = !m_fileSystemWatcher.EnableRaisingEvents;
+            MenuItem_autoReload.Checked = m_fileSystemWatcher.EnableRaisingEvents;
         }
     }
 

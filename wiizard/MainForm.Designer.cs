@@ -31,20 +31,26 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuItem_File = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_debugInfo = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_profile = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_reloadProfile = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_autoReload = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Readme = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Version = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.labProfileName = new System.Windows.Forms.Label();
             this.btnToggleMode = new System.Windows.Forms.Button();
-            this.MenuItem_reloadProfile = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.labStat = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuItem_File,
+            this.MenuItem_profile,
             this.MenuItem_Help});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -55,8 +61,7 @@
             // MenuItem_File
             // 
             this.MenuItem_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItem_debugInfo,
-            this.MenuItem_reloadProfile});
+            this.MenuItem_debugInfo});
             this.MenuItem_File.Name = "MenuItem_File";
             this.MenuItem_File.Size = new System.Drawing.Size(67, 20);
             this.MenuItem_File.Text = "ファイル(&F)";
@@ -64,9 +69,34 @@
             // MenuItem_debugInfo
             // 
             this.MenuItem_debugInfo.Name = "MenuItem_debugInfo";
-            this.MenuItem_debugInfo.Size = new System.Drawing.Size(187, 22);
+            this.MenuItem_debugInfo.Size = new System.Drawing.Size(150, 22);
             this.MenuItem_debugInfo.Text = "デバッグ情報(&D)";
             this.MenuItem_debugInfo.Click += new System.EventHandler(this.MenuItem_debugInfo_Click);
+            // 
+            // MenuItem_profile
+            // 
+            this.MenuItem_profile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItem_reloadProfile,
+            this.MenuItem_autoReload});
+            this.MenuItem_profile.Name = "MenuItem_profile";
+            this.MenuItem_profile.Size = new System.Drawing.Size(86, 20);
+            this.MenuItem_profile.Text = "プロファイル(&P)";
+            // 
+            // MenuItem_reloadProfile
+            // 
+            this.MenuItem_reloadProfile.Name = "MenuItem_reloadProfile";
+            this.MenuItem_reloadProfile.Size = new System.Drawing.Size(200, 22);
+            this.MenuItem_reloadProfile.Text = "プロファイルの再読込(&R)";
+            this.MenuItem_reloadProfile.Click += new System.EventHandler(this.MenuItem_reloadProfile_Click);
+            // 
+            // MenuItem_autoReload
+            // 
+            this.MenuItem_autoReload.Checked = true;
+            this.MenuItem_autoReload.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.MenuItem_autoReload.Name = "MenuItem_autoReload";
+            this.MenuItem_autoReload.Size = new System.Drawing.Size(200, 22);
+            this.MenuItem_autoReload.Text = "プロファイルの変更検知(&A)";
+            this.MenuItem_autoReload.Click += new System.EventHandler(this.MenuItem_autoReload_Click);
             // 
             // MenuItem_Help
             // 
@@ -119,18 +149,28 @@
             this.btnToggleMode.UseVisualStyleBackColor = true;
             this.btnToggleMode.Click += new System.EventHandler(this.btnToggleMode_Click);
             // 
-            // MenuItem_reloadProfile
+            // statusStrip1
             // 
-            this.MenuItem_reloadProfile.Name = "MenuItem_reloadProfile";
-            this.MenuItem_reloadProfile.Size = new System.Drawing.Size(187, 22);
-            this.MenuItem_reloadProfile.Text = "プロファイルの再読込(&R)";
-            this.MenuItem_reloadProfile.Click += new System.EventHandler(this.MenuItem_reloadProfile_Click);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.labStat});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 115);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(284, 22);
+            this.statusStrip1.TabIndex = 4;
+            this.statusStrip1.Text = "statusStrip";
+            // 
+            // labStat
+            // 
+            this.labStat.Name = "labStat";
+            this.labStat.Size = new System.Drawing.Size(46, 17);
+            this.labStat.Text = "Wiizard";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 118);
+            this.ClientSize = new System.Drawing.Size(284, 137);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.btnToggleMode);
             this.Controls.Add(this.labProfileName);
             this.Controls.Add(this.label1);
@@ -143,6 +183,8 @@
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -159,7 +201,11 @@
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Help;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Readme;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Version;
+        private System.Windows.Forms.ToolStripMenuItem MenuItem_profile;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_reloadProfile;
+        private System.Windows.Forms.ToolStripMenuItem MenuItem_autoReload;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel labStat;
     }
 }
 
