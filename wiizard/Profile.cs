@@ -21,7 +21,7 @@ namespace wiizard
         /// <summary>
         /// 割り当て
         /// </summary>
-        public Dictionary<WiimoteModel, string> Assignments;
+        public Dictionary<WiimoteModel, CommandOption> Assignments;
 
         /// <summary>
         /// JSONにシリアライズして保存します。
@@ -56,6 +56,19 @@ namespace wiizard
             return profile;
         }
 
+    }
+
+    public class CommandOption
+    {
+        public CommandType type;
+
+
+    }
+
+    public enum CommandType
+    {
+        Keyboard,
+        Mouse
     }
 
 }
