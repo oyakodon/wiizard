@@ -29,9 +29,32 @@ namespace wiizard
         N_ACC_Y
     }
 
-    static class WiimoteModelExt
+    public static class WiimoteModelExt
     {
-        public static bool GetState(this WiimoteModel item, WiimoteState ws)
+        public class AxisValue
+        {
+            public bool Available;
+            public double Value;
+
+            public AxisValue(bool valid, double val)
+            {
+                Available = valid;
+                Value = val;
+            }
+
+            public static AxisValue Invalid
+            {
+                get
+                {
+                    return new AxisValue(false, 0);
+                }
+            }
+
+        }
+
+        private const double IGNORE_THD = 0.05;
+
+        public static bool GetButtonState(this WiimoteModel item, WiimoteState ws)
         {
             bool ret = false;
             switch (item)
@@ -105,83 +128,62 @@ namespace wiizard
             }
         }
 
-        public static (double, bool) GetValue(this WiimoteModel item, WiimoteState ws)
+        public static AxisValue GetAxisValue(this WiimoteModel item, WiimoteState ws)
         {
-            (double, bool) invalid = (0, false);
-
             switch (item)
             {
                 case WiimoteModel.ACC_X:
-                    return (AdjustRange(ws.AccelState.Values.X, -1, 1, -0.5, 0.5), true);
+                    return new AxisValue(true, AdjustRange(ws.AccelState.Values.X, -1, 1, -0.5, 0.5));
                 case WiimoteModel.ACC_Y:
-                    return (AdjustRange(ws.AccelState.Values.Y, -1, 1, -0.5, 0.5), true);
+                    return new AxisValue(true, AdjustRange(ws.AccelState.Values.Y, -1, 1, -0.5, 0.5));
                 case WiimoteModel.N_ACC_X:
-                    return ws.ExtensionType == ExtensionType.Nunchuk ? (AdjustRange(ws.NunchukState.AccelState.Values.X, -1, 1, -0.5, 0.5), true) : invalid;
+                    return new AxisValue(ws.ExtensionType == ExtensionType.Nunchuk, AdjustRange(ws.NunchukState.AccelState.Values.X, -1, 1, -0.5, 0.5));
                 case WiimoteModel.N_ACC_Y:
-                    return ws.ExtensionType == ExtensionType.Nunchuk ? (AdjustRange(ws.NunchukState.AccelState.Values.Y, -1, 1, -0.5, 0.5), true) : invalid;
+                    return new AxisValue(ws.ExtensionType == ExtensionType.Nunchuk, AdjustRange(ws.NunchukState.AccelState.Values.Y, -1, 1, -0.5, 0.5));
                 case WiimoteModel.N_STICK_X:
-                    if (ws.ExtensionType == ExtensionType.Nunchuk)
                     {
-                        var value = ws.NunchukState.Joystick.X;
-                        if (Math.Abs(value) <= 0.05)
+                        if (ws.ExtensionType != ExtensionType.Nunchuk)
                         {
-                            value = 0;
+                            return AxisValue.Invalid;
                         }
-                        return (value, true);
-                    }
-                    else
-                    {
-                        return invalid;
+                        var value = ws.NunchukState.Joystick.X;
+                        value = Math.Abs(value) > IGNORE_THD ? value : 0;
+                        return new AxisValue(true, value);
                     }
                 case WiimoteModel.N_STICK_Y:
-                    if (ws.ExtensionType == ExtensionType.Nunchuk)
                     {
-                        var value = ws.NunchukState.Joystick.Y;
-                        if (Math.Abs(value) <= 0.05)
+                        if (ws.ExtensionType != ExtensionType.Nunchuk)
                         {
-                            value = 0;
+                            return AxisValue.Invalid;
                         }
-                        return (value, true);
-                    }
-                    else
-                    {
-                        return invalid;
+                        var value = ws.NunchukState.Joystick.Y;
+                        value = Math.Abs(value) > IGNORE_THD ? value : 0;
+                        return new AxisValue(true, value);
                     }
                 case WiimoteModel.IR_X:
                     {
                         var count = ws.IRState.IRSensors.Count(x => x.Found);
-                        if (count != 0)
+                        if (count == 0)
                         {
-                            var val = ws.IRState.IRSensors.Where(x => x.Found).Select(x => x.Position.X).Average();
-                            if (Math.Abs(val - 0.5) <= 0.05)
-                            {
-                                val = 0.5f;
-                            }
-                            return (val - 0.5, true);
+                            return AxisValue.Invalid;
                         }
-                        else
-                        {
-                            return invalid;
-                        }
+                        var val = (double)ws.IRState.IRSensors.Where(x => x.Found).Select(x => x.Position.X).Average();
+                        val = Math.Abs(val - 0.5) > IGNORE_THD ? val : 0.5;
+                        return new AxisValue(true, val);
                     }
                 case WiimoteModel.IR_Y:
                     {
                         var count = ws.IRState.IRSensors.Count(x => x.Found);
-                        if (count != 0)
+                        if (count == 0)
                         {
-                            var val = ws.IRState.IRSensors.Where(x => x.Found).Select(x => x.Position.Y).Average();
-                            if (Math.Abs(0.5 - val) <= 0.05)
-                            {
-                                val = 0.5f;
-                            }
-                            return (0.5 - val, true);
-                        } else
-                        {
-                            return invalid;
+                            return AxisValue.Invalid;
                         }
+                        var val = (double)ws.IRState.IRSensors.Where(x => x.Found).Select(x => x.Position.Y).Average();
+                        val = Math.Abs(0.5 - val) > IGNORE_THD ? val : 0.5;
+                        return new AxisValue(true, val);
                     }
                 default:
-                    return invalid;
+                    return AxisValue.Invalid;
             }
         }
 

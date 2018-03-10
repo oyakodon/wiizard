@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Linq;
 using System.Collections.Generic;
 
 using wiizard.Behaviors;
@@ -172,7 +173,8 @@ namespace wiizard
                 labProfileName.Text = m_profile.Name;
                 m_isRunning = true;
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show("重大なエラーが発生しました。\n終了します。\n\nエラー内容: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
                 Environment.Exit(1);
@@ -192,48 +194,29 @@ namespace wiizard
             var ws = args.WiimoteState;
 
             m_debugInfo.Update(ws);
-
+            
             if (m_isRunning)
             {
                 // Profileに設定されている動作を実行
-                foreach (WiimoteModel item in m_profile.Assignments.Keys)
+                foreach (WiimoteModel item in m_profile.ActionAssignments.Keys)
                 {
-                    if (item.isButton())
+                    foreach (var action in m_profile.ActionAssignments[item])
                     {
-                        var action = m_profile.Assignments[item];
-
-                        if (action.EndsWith("_INC"))
+                        if (item.isButton())
                         {
-                            if (item.GetState(ws))
-                            {
-                                m_debugInfo.LogWriteLine(item + " pressing.");
-                                action = action.Replace("_INC", "");
-                                ProcessButtonAction(action);
-                            }
+                            ProcessButtonAction(action, item.GetButtonState(ws), item.GetButtonState(prevState));
                         }
                         else
                         {
-                            if (!item.GetState(prevState) && item.GetState(ws))
+                            var value = item.GetAxisValue(ws);
+                            var prevValue = item.GetAxisValue(prevState);
+                            if (value.Available && prevValue.Available)
                             {
-                                m_debugInfo.LogWriteLine(item + " pressed.");
-                                ProcessButtonAction(action);
-                            }
-                            if (item.GetState(prevState) && !item.GetState(ws))
-                            {
-                                m_debugInfo.LogWriteLine(item + " released.");
-                                ProcessButtonAction(action, released: true);
+                                ProcessAxisAction(action, value.Value, prevValue.Value);
                             }
                         }
                     }
-                    else
-                    {
-                        var value = item.GetValue(ws);
-                        var prevValue = item.GetValue(prevState);
-                        if (value.Item2 && prevValue.Item2)
-                        {
-                            ProcessAxisAction(m_profile.Assignments[item], value.Item1, prevValue.Item1);
-                        }
-                    }
+
                 }
 
                 // Behavior固有の処理を実行
@@ -270,69 +253,198 @@ namespace wiizard
         /// <summary>
         /// 指定されたactionに基づく動作を実行します。
         /// </summary>
-        private void ProcessButtonAction(string action, bool released = false)
+        private void ProcessButtonAction(ActionAttribute action, bool state, bool prevState)
         {
-            bool inverted = false;
+            var pressing = action.Incremental.GetValueOrDefault(defaultValue: false) && state;
+            var pressed = !prevState && state;
+            var released = prevState && !state;
 
-            if (action.EndsWith("_INV"))
+            if (!pressing && !pressed && !released)
             {
-                action = action.Replace("_INV", "");
-                inverted = true;
+                return;
             }
 
-            switch (action)
+            var delay = action.Delay;
+            
+            if (action.Type == ActionType.Keyboard)
             {
-                case "M_LCLICK":
-                    WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_LEFTUP : WinAPI.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
-                    break;
-                case "M_RCLICK":
-                    WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_RIGHTUP : WinAPI.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
-                    break;
-                case "MOUSE_X":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, inverted ? -10 : 10, 0, 0, 0);
-                    break;
-                case "MOUSE_Y":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, 0, inverted ? -10 : 10, 0, 0);
-                    break;
-                case "MOUSE_WHEEL":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_WHEEL, 0, 0, inverted ? -20 : 20, 0);
-                    break;
-                default:
-                    if (m_vkcodes.Contains(action))
+                var key = action.Key;
+                var modKey = action.ModifierKey;
+                bool sendModKey = modKey != null && m_vkcodes.Contains(modKey) && pressed;
+
+                if (m_vkcodes.Contains(key))
+                {
+                    Task.Run(() =>
                     {
-                        WinAPI.keybd_event(m_vkcodes[action], 0, released ? WinAPI.KEYEVENTF_KEYUP : 0, UIntPtr.Zero);
-                    }
+                        Thread.Sleep(delay);
 
-                    break;
+                        if (sendModKey)
+                        {
+                            WinAPI.keybd_event(m_vkcodes[modKey], 0, 0, UIntPtr.Zero);
+                            m_debugInfo.LogWriteLine("modKey press");
+                        }
+
+                        WinAPI.keybd_event(m_vkcodes[key], 0, released ? WinAPI.KEYEVENTF_KEYUP : 0, UIntPtr.Zero);
+
+                        if (sendModKey)
+                        {
+                            WinAPI.keybd_event(m_vkcodes[modKey], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
+                            m_debugInfo.LogWriteLine("modKey release");
+                        }
+
+                    });
+                }
+
+                return;
             }
+
+            var pos = Cursor.Position;
+            var value = action.Value;
+            var mouseAction = action.MouseAction;
+
+            Task.Run(() =>
+            {
+                Thread.Sleep(delay);
+
+                switch (mouseAction)
+                {
+                    case MouseAction.LeftClick:
+                        WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_LEFTUP : WinAPI.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                        break;
+                    case MouseAction.RightClick:
+                        WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_RIGHTUP : WinAPI.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+                        break;
+                    case MouseAction.MiddleClick:
+                        WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_MIDDLEUP : WinAPI.MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, 0);
+                        break;
+                    case MouseAction.MoveDx:
+                        if (!released)
+                        {
+                            WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, value.GetValueOrDefault(defaultValue: 0), 0, 0, 0);
+                        }
+                        break;
+                    case MouseAction.MoveDy:
+                        if (!released)
+                        {
+                            WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, 0, value.GetValueOrDefault(defaultValue: 0), 0, 0);
+                        }
+                        break;
+                    case MouseAction.MoveX:
+                        if (pressed)
+                        {
+                            Cursor.Position = new System.Drawing.Point(value.GetValueOrDefault(defaultValue: pos.X), pos.Y);
+                        }
+                        break;
+                    case MouseAction.MoveY:
+                        if (pressed)
+                        {
+                            Cursor.Position = new System.Drawing.Point(pos.X, value.GetValueOrDefault(defaultValue: pos.Y));
+                        }
+                        break;
+                    case MouseAction.ScrollWheel:
+                        if (!released)
+                        {
+                            WinAPI.mouse_event(WinAPI.MOUSEEVENTF_WHEEL, 0, 0, value.GetValueOrDefault(defaultValue: 0), 0);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
         }
 
-        private void ProcessAxisAction(string action, double value, double prevValue)
+        private void ProcessAxisAction(ActionAttribute action, double value, double prevValue)
         {
-            switch (action)
+            const double IGNORE_THD = 0.05;
+
+            var pressing = action.Incremental.GetValueOrDefault(defaultValue: false) && Math.Abs(value) > IGNORE_THD;
+            var pressed = Math.Abs(value) > IGNORE_THD && Math.Abs(prevValue) <= IGNORE_THD;
+            var released = Math.Abs(value) <= IGNORE_THD && Math.Abs(prevValue) > IGNORE_THD;
+
+            var delay = action.Delay;
+
+            if (action.Type == ActionType.Keyboard)
             {
-                case "MOUSE_X":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, (int)(value * 20), 0, 0, 0);
+                var key = action.Key;
+                var modKey = action.ModifierKey;
+                bool sendModKey = modKey != null && m_vkcodes.Contains(modKey) && pressed;
+
+                if (m_vkcodes.Contains(key) && (pressing || pressed || released))
+                {
+                    Task.Run(() =>
+                    {
+                        Thread.Sleep(delay);
+
+                        if (sendModKey)
+                        {
+                            WinAPI.keybd_event(m_vkcodes[modKey], 0, 0, UIntPtr.Zero);
+                        }
+
+                        WinAPI.keybd_event(m_vkcodes[key], 0, released ? WinAPI.KEYEVENTF_KEYUP : 0, UIntPtr.Zero);
+
+                        if (sendModKey)
+                        {
+                            WinAPI.keybd_event(m_vkcodes[modKey], 0, WinAPI.KEYEVENTF_KEYUP, UIntPtr.Zero);
+                        }
+                    });
+                }
+
+                return;
+            }
+
+            var pos = Cursor.Position;
+            var mouseAction = action.MouseAction;
+            var actionValue = action.Value;
+
+            Task.Run(() =>
+            {
+                Thread.Sleep(delay);
+
+                switch (mouseAction)
+                {
+                    case MouseAction.LeftClick:
+                    if (pressing || pressed || released)
+                    {
+                        WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_LEFTUP : WinAPI.MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0);
+                    }
                     break;
-                case "MOUSE_Y":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, 0, (int)(value * 20), 0, 0);
+                case MouseAction.RightClick:
+                    if (pressing || pressed || released)
+                    {
+                        WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_RIGHTUP : WinAPI.MOUSEEVENTF_RIGHTDOWN, 0, 0, 0, 0);
+                    }
                     break;
-                case "MOUSE_WHEEL":
-                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_WHEEL, 0, 0, (int)(value * 20), 0);
+                case MouseAction.MiddleClick:
+                    if (pressing || pressed || released)
+                    {
+                        WinAPI.mouse_event(released ? WinAPI.MOUSEEVENTF_MIDDLEUP : WinAPI.MOUSEEVENTF_MIDDLEDOWN, 0, 0, 0, 0);
+                    }
+                    break;
+                case MouseAction.MoveDx:
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, (int)(actionValue.GetValueOrDefault(defaultValue: 1) * value), 0, 0, 0);
+                    break;
+                case MouseAction.MoveDy:
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_MOVE, 0, (int)(actionValue.GetValueOrDefault(defaultValue: 1) * value), 0, 0);
+                    break;
+                case MouseAction.MoveX:
+                    if (pressing || pressed || released)
+                    {
+                        Cursor.Position = new System.Drawing.Point(actionValue.GetValueOrDefault(defaultValue: pos.X), pos.Y);
+                    }
+                    break;
+                case MouseAction.MoveY:
+                    if (pressing || pressed || released)
+                    {
+                        Cursor.Position = new System.Drawing.Point(pos.X, actionValue.GetValueOrDefault(defaultValue: pos.Y));
+                    }
+                    break;
+                case MouseAction.ScrollWheel:
+                    WinAPI.mouse_event(WinAPI.MOUSEEVENTF_WHEEL, 0, 0, (int)(actionValue.GetValueOrDefault(defaultValue: 1) * value), 0);
                     break;
                 default:
-                    if (Math.Abs(value) > 0.05)
-                    {
-                        // press
-                        ProcessButtonAction(action);
-                    }
-                    else if (Math.Abs(prevValue) > 0.05)
-                    {
-                        //release
-                        ProcessButtonAction(action, released: true);
-                    }
                     break;
             }
+        });
 
         }
 
