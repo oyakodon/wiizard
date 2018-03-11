@@ -189,6 +189,8 @@ namespace wiizard
             LoadProfile(e.FullPath);
         }
 
+
+
         private void UpdateWiimoteChanged(WiimoteChangedEventArgs args)
         {
             var ws = args.WiimoteState;
