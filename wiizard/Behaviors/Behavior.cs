@@ -10,7 +10,7 @@ namespace wiizard.Behaviors
     {
         // Wiiリモコンの状態が変更された時に、Behavior固有の挙動をする
         void Update(WiimoteState ws, WiimoteState prev);
-        
+
         // ユーザーから変更不可な項目
         List<WiimoteModel> GetDisabledItem();
 
@@ -20,4 +20,26 @@ namespace wiizard.Behaviors
         // 表示名
         string GetDisplayName();
     }
+
+    public class BehaviorManager
+    {
+        public BehaviorManager()
+        {
+            m_dic_NameToBehavior = new Dictionary<string, Behavior>();
+        }
+
+        public void Add(Behavior b)
+        {
+            m_dic_NameToBehavior.Add(b.GetName(), b);
+        }
+
+        public Behavior GetBehavior(string name)
+        {
+            return m_dic_NameToBehavior[name];
+        }
+
+        private Dictionary<string, Behavior> m_dic_NameToBehavior;
+
+    }
+
 }

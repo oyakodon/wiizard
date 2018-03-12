@@ -28,21 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuItem_File = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItem_debugInfo = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItem_profile = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItem_reloadProfile = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_newProfile = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_autoReload = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Readme = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_debugInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Version = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.labStat = new System.Windows.Forms.ToolStripStatusLabel();
             this.panel_profile = new System.Windows.Forms.Panel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.listBox_profile = new System.Windows.Forms.ListBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnRun = new System.Windows.Forms.Button();
+            this.picBox_wii = new System.Windows.Forms.PictureBox();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.panel_profile.SuspendLayout();
@@ -50,13 +51,13 @@
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuItem_File,
-            this.MenuItem_profile,
             this.MenuItem_Help});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
@@ -67,33 +68,17 @@
             // MenuItem_File
             // 
             this.MenuItem_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItem_debugInfo});
+            this.MenuItem_newProfile,
+            this.MenuItem_autoReload});
             this.MenuItem_File.Name = "MenuItem_File";
             this.MenuItem_File.Size = new System.Drawing.Size(67, 20);
             this.MenuItem_File.Text = "ファイル(&F)";
             // 
-            // MenuItem_debugInfo
+            // MenuItem_newProfile
             // 
-            this.MenuItem_debugInfo.Name = "MenuItem_debugInfo";
-            this.MenuItem_debugInfo.Size = new System.Drawing.Size(150, 22);
-            this.MenuItem_debugInfo.Text = "デバッグ情報(&D)";
-            this.MenuItem_debugInfo.Click += new System.EventHandler(this.MenuItem_debugInfo_Click);
-            // 
-            // MenuItem_profile
-            // 
-            this.MenuItem_profile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItem_reloadProfile,
-            this.MenuItem_autoReload});
-            this.MenuItem_profile.Name = "MenuItem_profile";
-            this.MenuItem_profile.Size = new System.Drawing.Size(86, 20);
-            this.MenuItem_profile.Text = "プロファイル(&P)";
-            // 
-            // MenuItem_reloadProfile
-            // 
-            this.MenuItem_reloadProfile.Name = "MenuItem_reloadProfile";
-            this.MenuItem_reloadProfile.Size = new System.Drawing.Size(200, 22);
-            this.MenuItem_reloadProfile.Text = "プロファイルの再読込(&R)";
-            this.MenuItem_reloadProfile.Click += new System.EventHandler(this.MenuItem_reloadProfile_Click);
+            this.MenuItem_newProfile.Name = "MenuItem_newProfile";
+            this.MenuItem_newProfile.Size = new System.Drawing.Size(200, 22);
+            this.MenuItem_newProfile.Text = "新規プロファイル(&N)";
             // 
             // MenuItem_autoReload
             // 
@@ -108,6 +93,7 @@
             // 
             this.MenuItem_Help.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuItem_Readme,
+            this.MenuItem_debugInfo,
             this.MenuItem_Version});
             this.MenuItem_Help.Name = "MenuItem_Help";
             this.MenuItem_Help.Size = new System.Drawing.Size(65, 20);
@@ -119,6 +105,13 @@
             this.MenuItem_Readme.Size = new System.Drawing.Size(157, 22);
             this.MenuItem_Readme.Text = "Readme.md";
             this.MenuItem_Readme.Click += new System.EventHandler(this.MenuItem_Readme_Click);
+            // 
+            // MenuItem_debugInfo
+            // 
+            this.MenuItem_debugInfo.Name = "MenuItem_debugInfo";
+            this.MenuItem_debugInfo.Size = new System.Drawing.Size(157, 22);
+            this.MenuItem_debugInfo.Text = "デバッグ情報(&D)";
+            this.MenuItem_debugInfo.Click += new System.EventHandler(this.MenuItem_debugInfo_Click);
             // 
             // MenuItem_Version
             // 
@@ -166,7 +159,8 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
-            this.splitContainer.Panel2.Controls.Add(this.button1);
+            this.splitContainer.Panel2.Controls.Add(this.picBox_wii);
+            this.splitContainer.Panel2.Controls.Add(this.btnRun);
             this.splitContainer.Size = new System.Drawing.Size(929, 536);
             this.splitContainer.SplitterDistance = 196;
             this.splitContainer.TabIndex = 3;
@@ -208,15 +202,28 @@
             this.listBox_profile.Name = "listBox_profile";
             this.listBox_profile.Size = new System.Drawing.Size(196, 536);
             this.listBox_profile.TabIndex = 0;
+            this.listBox_profile.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_profile_DrawItem);
+            this.listBox_profile.SelectedIndexChanged += new System.EventHandler(this.listBox_profile_SelectedIndexChanged);
             // 
-            // button1
+            // btnRun
             // 
-            this.button1.Location = new System.Drawing.Point(156, 465);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(394, 51);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
+            this.btnRun.Location = new System.Drawing.Point(156, 465);
+            this.btnRun.Name = "btnRun";
+            this.btnRun.Size = new System.Drawing.Size(394, 51);
+            this.btnRun.TabIndex = 1;
+            this.btnRun.Text = "開始";
+            this.btnRun.UseVisualStyleBackColor = true;
+            this.btnRun.Click += new System.EventHandler(this.btnRun_Click);
+            // 
+            // picBox_wii
+            // 
+            this.picBox_wii.Image = ((System.Drawing.Image)(resources.GetObject("picBox_wii.Image")));
+            this.picBox_wii.Location = new System.Drawing.Point(34, 17);
+            this.picBox_wii.Name = "picBox_wii";
+            this.picBox_wii.Size = new System.Drawing.Size(670, 433);
+            this.picBox_wii.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picBox_wii.TabIndex = 1;
+            this.picBox_wii.TabStop = false;
             // 
             // MainForm
             // 
@@ -241,6 +248,7 @@
             this.splitContainer.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -250,19 +258,19 @@
 
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_File;
-        private System.Windows.Forms.ToolStripMenuItem MenuItem_debugInfo;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Help;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Readme;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Version;
-        private System.Windows.Forms.ToolStripMenuItem MenuItem_profile;
-        private System.Windows.Forms.ToolStripMenuItem MenuItem_reloadProfile;
-        private System.Windows.Forms.ToolStripMenuItem MenuItem_autoReload;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel labStat;
         private System.Windows.Forms.Panel panel_profile;
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.ListBox listBox_profile;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnRun;
+        private System.Windows.Forms.ToolStripMenuItem MenuItem_newProfile;
+        private System.Windows.Forms.ToolStripMenuItem MenuItem_autoReload;
+        private System.Windows.Forms.ToolStripMenuItem MenuItem_debugInfo;
+        private System.Windows.Forms.PictureBox picBox_wii;
     }
 }
 

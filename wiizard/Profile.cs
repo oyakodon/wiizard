@@ -54,7 +54,7 @@ namespace wiizard
             var profile = JsonConvert.DeserializeObject<Profile>(json);
 
             // 構文チェック
-            if (profile.ActionAssignments == null || profile.Behavior == null || profile.Name == null || profile.ActionAssignments.Count == 0)
+            if (profile.ActionAssignments == null || profile.Behavior == null || profile.Name == null)
             {
                 throw new System.FormatException("JSONの構文に誤りがあるか, 必要な項目を満たしていません.");
             }

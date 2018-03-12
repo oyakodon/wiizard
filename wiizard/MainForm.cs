@@ -11,6 +11,7 @@ using WiimoteLib;
 using Newtonsoft.Json;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Drawing;
 
 namespace wiizard
 {
@@ -19,33 +20,37 @@ namespace wiizard
         public MainForm()
         {
             InitializeComponent();
+
+            m_bMgr = new BehaviorManager();
+            m_bMgr.Add(new StandardBehavior());
+            m_bMgr.Add(new MinecraftBehavior());
+
         }
 
         public void MainForm_Load(object sender, EventArgs e)
         {
-            // Load profile.
-            var ofd = new OpenFileDialog();
-            ofd.InitialDirectory = Environment.CurrentDirectory;
-            ofd.Filter = "JSONファイル(*.json)|*.json|すべてのファイル(*.*)|*.*";
-            ofd.Title = "プロファイルを選択してください";
-
-            if (ofd.ShowDialog() == DialogResult.OK)
+            // Profileフォルダの読み込み
+            if (!Directory.Exists("./Profile/"))
             {
-                // ファイル変更の検知
-                m_fileSystemWatcher.Path = Path.GetDirectoryName(ofd.FileName);
-                m_fileSystemWatcher.Filter = Path.GetFileName(ofd.FileName);
-                m_fileSystemWatcher.SynchronizingObject = this;
-                m_fileSystemWatcher.NotifyFilter = NotifyFilters.LastAccess;
-                m_fileSystemWatcher.Changed += m_fileSystemWatcher_Changed;
-                m_fileSystemWatcher.EnableRaisingEvents = true;　//監視を開始
+                // Defaultプロファイルの作成
+                Directory.CreateDirectory("./Profile/");
+                var defaultProfile = new Profile();
+                defaultProfile.Name = "Default";
+                defaultProfile.Behavior = (new StandardBehavior()).GetName();
+                defaultProfile.ActionAssignments = new Dictionary<WiimoteModel, List<ActionAttribute>>();
+                defaultProfile.Save("./Profile/default.json");
+            }
 
-                // プロファイルの読み込み
-                LoadProfile(ofd.FileName);
-            }
-            else
-            {
-                Environment.Exit(1);
-            }
+            m_profiles = new List<Profile>();
+            LoadProfiles();
+
+            // ファイル変更の検知
+            m_fileSystemWatcher.Path = "./Profile";
+            m_fileSystemWatcher.Filter = "*.json";
+            m_fileSystemWatcher.SynchronizingObject = this;
+            m_fileSystemWatcher.NotifyFilter = NotifyFilters.LastAccess;
+            m_fileSystemWatcher.Changed += m_fileSystemWatcher_Changed;
+            m_fileSystemWatcher.EnableRaisingEvents = true;　//監視を開始
 
             m_wm = new Wiimote();
 
@@ -87,13 +92,13 @@ namespace wiizard
                 switch (ex)
                 {
                     case WiimoteNotFoundException _:
-                        msg = "Wiiリモコンを認識できませんでした。";
+                        msg = "Wiiリモコンを認識できませんでした.\n\n1. Bluetoothが有効になっているか,\n2. Wiiリモコンに電池が入っているか,\n3. LEDが点滅して接続待機状態になっているかどうか\n等を確認してください.";
                         break;
                     case WiimoteException _:
-                        msg = "Wiiリモコンに何らかのエラーが発生しました。";
+                        msg = "Wiiリモコンに何らかのエラーが発生しました.";
                         break;
                     default:
-                        msg = "予期せぬエラーが発生しました。";
+                        msg = "予期せぬエラーが発生しました.";
                         break;
                 }
 
@@ -134,51 +139,61 @@ namespace wiizard
         private WiimoteState prevState = new WiimoteState(); // 直前の状態
         private VKCodes m_vkcodes = new VKCodes();
         private DebugInfo m_debugInfo;
-        private Profile m_profile;
-        private Behavior m_behavior;
+        private List<Profile> m_profiles;
+        private int m_selectedProfile;
+        private BehaviorManager m_bMgr;
 
-        private bool m_isRunning = false;
-        private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
-        private const string VERSION = "BETA 0.2.0";
+        private bool _m_isRunning = false;
 
-        private string m_profilePath;
-
-        private void LoadProfile()
+        private bool m_isRunning
         {
-            LoadProfile(m_profilePath);
+            get
+            {
+                return _m_isRunning;
+            }
+            set
+            {
+                _m_isRunning = value;
+                OnRunStateChanged();
+            }
         }
 
-        private void LoadProfile(string profilePath)
+        // m_isRunning変更イベント
+        private void OnRunStateChanged()
         {
-            m_profilePath = profilePath;
+            listBox_profile.Enabled = !m_isRunning;
+            btnRun.Text = m_isRunning ? "停止" : "開始";
+        }
 
+        private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
+        private const string VERSION = "BETA 0.3.0";
+
+        private void LoadProfiles()
+        {
             m_isRunning = false;
 
             Thread.Sleep(100); // ファイルアクセス衝突防止
+            m_profiles.Clear();
 
-            try
+            foreach (var path in Directory.EnumerateFiles("./Profile/"))
             {
-                m_profile = Profile.Load(profilePath);
-
-                switch (m_profile.Behavior)
+                try
                 {
-                    case "Minecraft":
-                        m_behavior = new MinecraftBehavior();
-                        break;
-                    default:
-                        m_behavior = new StandardBehavior();
-                        break;
+                    m_profiles.Add(Profile.Load(path));
                 }
-
-                labProfileName.Text = m_profile.Name;
-                m_isRunning = true;
-
+                catch (Exception ex)
+                {
+                    MessageBox.Show("重大なエラーが発生しました。\n終了します。\n\nエラー内容: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
+                    Environment.Exit(1);
+                }
             }
-            catch (Exception ex)
+
+            listBox_profile.Items.Clear();
+            foreach(var p in m_profiles)
             {
-                MessageBox.Show("重大なエラーが発生しました。\n終了します。\n\nエラー内容: " + ex.Message, "エラー", MessageBoxButtons.OK, MessageBoxIcon.Stop);
-                Environment.Exit(1);
+                listBox_profile.Items.Add(p.Name);
             }
+            listBox_profile.SelectedIndex = 0;
 
         }
 
@@ -186,10 +201,8 @@ namespace wiizard
         {
             labStat.Text = "プロファイルの変更を適用しました. (" + DateTime.Now.ToShortTimeString() + ")";
             System.Media.SystemSounds.Asterisk.Play();
-            LoadProfile(e.FullPath);
+            LoadProfiles();
         }
-
-
 
         private void UpdateWiimoteChanged(WiimoteChangedEventArgs args)
         {
@@ -200,9 +213,9 @@ namespace wiizard
             if (m_isRunning)
             {
                 // Profileに設定されている動作を実行
-                foreach (WiimoteModel item in m_profile.ActionAssignments.Keys)
+                foreach (WiimoteModel item in m_profiles[m_selectedProfile].ActionAssignments.Keys)
                 {
-                    foreach (var action in m_profile.ActionAssignments[item])
+                    foreach (var action in m_profiles[m_selectedProfile].ActionAssignments[item])
                     {
                         if (item.isButton())
                         {
@@ -222,7 +235,8 @@ namespace wiizard
                 }
 
                 // Behavior固有の処理を実行
-                m_behavior.Update(ws, prevState);
+                var behaviorName = m_profiles[m_selectedProfile].Behavior;
+                m_bMgr.GetBehavior(behaviorName).Update(ws, prevState);
             }
 
             // 状態を保持
@@ -470,19 +484,6 @@ namespace wiizard
             return result;
         }
 
-        private void btnToggleMode_Click(object sender, EventArgs e)
-        {
-            m_isRunning = !m_isRunning;
-            if (m_isRunning)
-            {
-                btnToggleMode.Text = "停止(&S)";
-            }
-            else
-            {
-                btnToggleMode.Text = "開始(&R)";
-            }
-        }
-
         private void MenuItem_Readme_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/oyakodon/wiizard/tree/master/README.md");
@@ -493,16 +494,52 @@ namespace wiizard
             MessageBox.Show("< Wiizard >\n\nVer. " + VERSION + "\n\n作者: Oyakodon\n(https://github.com/oyakodon/)", "バージョン情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void MenuItem_reloadProfile_Click(object sender, EventArgs e)
-        {
-            LoadProfile();
-            MessageBox.Show("プロファイルは正常に再読み込みされました。", "Wiizard", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
         private void MenuItem_autoReload_Click(object sender, EventArgs e)
         {
             m_fileSystemWatcher.EnableRaisingEvents = !m_fileSystemWatcher.EnableRaisingEvents;
             MenuItem_autoReload.Checked = m_fileSystemWatcher.EnableRaisingEvents;
+        }
+
+        private void listBox_profile_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+
+            if (e.Index > -1)
+            {
+                Brush b = new SolidBrush(e.ForeColor);
+
+                if ((e.State & DrawItemState.Disabled) == DrawItemState.Disabled)
+                {
+                    if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
+                    {
+                        b = new SolidBrush(Color.Black);
+
+                        e.Graphics.FillRectangle(Brushes.LightGray, e.Bounds);
+                    }
+                }
+
+                var sf = new StringFormat();
+                sf.LineAlignment = StringAlignment.Center;
+
+                var itemText = (sender as ListBox).Items[e.Index].ToString();
+
+                e.Graphics.DrawString(itemText, e.Font, b, e.Bounds, sf);
+
+                b.Dispose();
+
+            }
+
+            e.DrawFocusRectangle();
+        }
+
+        private void listBox_profile_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            m_selectedProfile = (sender as ListBox).SelectedIndex;
+        }
+
+        private void btnRun_Click(object sender, EventArgs e)
+        {
+            m_isRunning = !m_isRunning;
         }
     }
 
