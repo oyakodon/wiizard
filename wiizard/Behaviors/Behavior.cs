@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
+using System.Collections.Generic;
 using WiimoteLib;
 
 namespace wiizard.Behaviors
@@ -25,20 +26,30 @@ namespace wiizard.Behaviors
     {
         public BehaviorManager()
         {
-            m_dic_NameToBehavior = new Dictionary<string, Behavior>();
+            m_dic_names = new Dictionary<string, Behavior>();
+            m_dic_displayNames = new Dictionary<string, Behavior>();
         }
 
         public void Add(Behavior b)
         {
-            m_dic_NameToBehavior.Add(b.GetName(), b);
+            m_dic_names.Add(b.GetName(), b);
+            m_dic_displayNames.Add(b.GetDisplayName(), b);
         }
 
-        public Behavior GetBehavior(string name)
+        public List<string> GetBehaviorNames() => m_dic_displayNames.Keys.ToList();
+
+        public Behavior GetBehavior(string name, bool displayName = false)
         {
-            return m_dic_NameToBehavior[name];
+            if (displayName)
+            {
+                return m_dic_displayNames[name];
+            }
+
+            return m_dic_names[name];
         }
 
-        private Dictionary<string, Behavior> m_dic_NameToBehavior;
+        private Dictionary<string, Behavior> m_dic_names;
+        private Dictionary<string, Behavior> m_dic_displayNames;
 
     }
 

@@ -25,6 +25,12 @@ namespace wiizard
         public Dictionary<WiimoteModel, List<ActionAttribute>> ActionAssignments;
 
         /// <summary>
+        /// (非シリアライズ) 保存先
+        /// </summary>
+        [JsonIgnore]
+        public string _path;
+
+        /// <summary>
         /// JSONにシリアライズして保存します。
         /// </summary>
         public void Save(string path)
@@ -75,7 +81,7 @@ namespace wiizard
         [JsonConverter(typeof(StringEnumConverter))]
         public MouseAction? MouseAction;
 
-        public int Delay;
+        public int? Delay;
 
         public bool? Incremental;
         public int? Value;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 
@@ -23,6 +24,11 @@ namespace wiizard
         public bool Contains(string code)
         {
             return vkcodes_dic.ContainsKey(code);
+        }
+
+        public List<string> GetKeys()
+        {
+            return vkcodes_dic.Keys.ToList();
         }
 
         public byte this[string code]
