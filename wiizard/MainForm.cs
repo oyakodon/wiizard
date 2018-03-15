@@ -15,6 +15,13 @@ using System.Drawing;
 
 namespace wiizard
 {
+    /*
+     * TODO
+     *  - ボタンの種類にN_STICK_UP, N_STICK_DOWN, N_STICK_LEFT,N_STICK_RIGHTを追加
+     *  - Profileに"UseJoystickAsButton"(bool)を追加
+     *  - これらに伴う変更
+     *  - UIを、左半分: マウス・キーボード割当設定, 右半分: ボタン/IR・加速度/詳細設定の3タブ構成に変更
+     */
     public partial class MainForm : Form
     {
         public MainForm()
@@ -24,103 +31,11 @@ namespace wiizard
             m_bMgr.Add(new StandardBehavior());
             m_bMgr.Add(new MinecraftBehavior());
 
-            m_combos_button.AddRange(new List<ComboBox>()
-            {
-                combo_A,
-                combo_B,
-                combo_One,
-                combo_Two,
-                combo_Minus,
-                combo_Home,
-                combo_Plus,
-                combo_Up,
-                combo_Right,
-                combo_Left,
-                combo_Down,
-                combo_C,
-                combo_Z,
-                combo_Joy_Down,
-                combo_Joy_Left,
-                combo_Joy_Right,
-                combo_Joy_Up
-            });
-
-            m_combos_acc_ir.AddRange(new List<ComboBox>()
-            {
-                combo_acc_x,
-                combo_acc_y,
-                combo_nunchuk_acc_x,
-                combo_nunchuk_acc_y,
-                combo_ir_x,
-                combo_ir_y,
-                combo_nunchuk_joy_x,
-                combo_nunchuk_joy_y
-            });
-
-            m_combos_nunchuk.AddRange(new List<ComboBox>
-            {
-                combo_C,
-                combo_Z,
-                combo_Joy_Down,
-                combo_Joy_Left,
-                combo_Joy_Right,
-                combo_Joy_Up,
-                combo_nunchuk_acc_x,
-                combo_nunchuk_acc_y,
-                combo_nunchuk_joy_x,
-                combo_nunchuk_joy_y
-            });
-
-            m_dic_combos.Add(WiimoteModel.A, combo_A);
-            m_dic_combos.Add(WiimoteModel.B, combo_B);
-            m_dic_combos.Add(WiimoteModel.One, combo_One);
-            m_dic_combos.Add(WiimoteModel.Two, combo_Two);
-            m_dic_combos.Add(WiimoteModel.Minus, combo_Minus);
-            m_dic_combos.Add(WiimoteModel.Home, combo_Home);
-            m_dic_combos.Add(WiimoteModel.Plus, combo_Plus);
-            m_dic_combos.Add(WiimoteModel.Up, combo_Up);
-            m_dic_combos.Add(WiimoteModel.Right, combo_Right);
-            m_dic_combos.Add(WiimoteModel.Left, combo_Left);
-            m_dic_combos.Add(WiimoteModel.Down, combo_Down);
-            m_dic_combos.Add(WiimoteModel.N_C, combo_C);
-            m_dic_combos.Add(WiimoteModel.N_Z, combo_Z);
-            m_dic_combos.Add(WiimoteModel.N_STICK_Y, combo_Joy_Down);
-            m_dic_combos.Add(WiimoteModel.N_STICK_X, combo_Joy_Left);
-            m_dic_combos.Add(WiimoteModel.N_STICK_X, combo_Joy_Right);
-            m_dic_combos.Add(WiimoteModel.N_STICK_Y, combo_Joy_Up);
-            m_dic_combos.Add(WiimoteModel.ACC_X, combo_acc_x);
-            m_dic_combos.Add(WiimoteModel.ACC_Y, combo_acc_y);
-            m_dic_combos.Add(WiimoteModel.N_ACC_X, combo_nunchuk_acc_x);
-            m_dic_combos.Add(WiimoteModel.N_ACC_Y, combo_nunchuk_acc_y);
-            m_dic_combos.Add(WiimoteModel.IR_X, combo_ir_x);
-            m_dic_combos.Add(WiimoteModel.IR_Y, combo_ir_y);
-            m_dic_combos.Add(WiimoteModel.N_STICK_X, combo_nunchuk_joy_x);
-            m_dic_combos.Add(WiimoteModel.N_STICK_Y, combo_nunchuk_joy_y);
-
         }
 
         public void MainForm_Load(object sender, EventArgs e)
         {
-            // 設定UIのコンボボックスの要素初期化
-            var _comboItems = new List<string>();
-            _comboItems.Add("無し");
-            _comboItems.AddRange(m_dic_ui.Keys);
-
-            var comboItems = _comboItems.ToArray();
-
-            foreach (var combo in m_combos_acc_ir)
-            {
-                combo.Items.AddRange(comboItems);
-            }
-
-            _comboItems.AddRange(m_vkcodes.GetKeys());
-            comboItems = _comboItems.ToArray();
-
-            foreach (var combo in m_combos_button)
-            {
-                combo.Items.AddRange(comboItems);
-            }
-
+            // UIの初期化
             combo_behavior.Items.AddRange(m_bMgr.GetBehaviorNames().ToArray());
 
             // Profileフォルダの読み込み
@@ -240,11 +155,7 @@ namespace wiizard
         private bool _m_isRunning = false;
         private bool m_profileChanged = false;
 
-        private List<ComboBox> m_combos_button = new List<ComboBox>();
-        private List<ComboBox> m_combos_acc_ir = new List<ComboBox>();
-        private List<ComboBox> m_combos_nunchuk = new List<ComboBox>();
-        private Dictionary<WiimoteModel, ComboBox> m_dic_combos = new Dictionary<WiimoteModel, ComboBox>();
-        private Dictionary<string, MouseAction> m_dic_ui = new Dictionary<string, MouseAction>
+        private Dictionary<string, MouseAction> m_dic_mouseAction = new Dictionary<string, MouseAction>
         {
             { "マウスのXを相対移動",    MouseAction.MoveDx },
             { "マウスのYを相対移動",    MouseAction.MoveDy },
@@ -649,21 +560,33 @@ namespace wiizard
         private void listBox_profile_SelectedIndexChanged(object sender, EventArgs e)
         {
             m_selectedProfile = m_profiles[(sender as ListBox).SelectedIndex];
-
             m_behavior = m_bMgr.GetBehavior(m_selectedProfile.Behavior);
 
-            // 全て有効化
-            foreach (var combo in m_dic_combos.Values)
-            {
-                combo.Enabled = true;
-            }
+            //// 現在の設定をUIに適用
+            //foreach (var combo in m_dic_combos.SelectMany(i => i.Value))
+            //{
+            //    var model = m_dic_combos.First(i => i.Value.Contains(combo)).Key;
+                
+            //}
 
-            // Behaviorで指定されたものを無効化
-            foreach (var disabled in m_behavior.GetDisabledItem())
-            {
-                m_dic_combos[disabled].Enabled = false;
-            }
-
+            //// Behaviorで指定されたものを無効化
+            //var disabledItem = m_behavior.GetDisabledItem();
+            //foreach (var p in m_dic_combos)
+            //{
+            //    foreach(var combo in p.Value)
+            //    {
+            //        if (disabledItem.Contains(p.Key))
+            //        {
+            //            combo.Enabled = false;
+            //            combo.Text = "無し";
+            //        }
+            //        else
+            //        {
+            //            combo.Enabled = true;
+            //        }
+            //    }
+            //}
+            
             OnRunStateChanged();
         }
 
@@ -672,41 +595,41 @@ namespace wiizard
             // プロファイル変更の保存
             if (m_profileChanged)
             {
-                var newProfile = new Profile();
-                newProfile.Name = m_selectedProfile.Name;
-                newProfile.Behavior = m_bMgr.GetBehavior(combo_behavior.Text, true).GetName();
-                newProfile.ActionAssignments = new Dictionary<WiimoteModel, List<ActionAttribute>>();
+                //var newProfile = new Profile();
+                //newProfile.Name = m_selectedProfile.Name;
+                //newProfile.Behavior = m_bMgr.GetBehavior(combo_behavior.Text, true).GetName();
+                //newProfile.ActionAssignments = new Dictionary<WiimoteModel, List<ActionAttribute>>();
 
-                foreach (var combo in m_dic_combos.Values)
-                {
-                    var attr = new ActionAttribute();
-                    var model = m_dic_combos.First(i => i.Value == combo).Key;
+                //foreach (var combo in m_dic_combos.SelectMany(i => i.Value))
+                //{
+                //    var attr = new ActionAttribute();
+                //    var model = m_dic_combos.First(i => i.Value.Contains(combo)).Key;
 
-                    if (!check_UseNunchuk.Checked && m_combos_nunchuk.Contains(combo))
-                    {
-                        continue;
-                    }
+                //    if (!check_UseNunchuk.Checked && m_combos_nunchuk.Contains(combo))
+                //    {
+                //        continue;
+                //    }
 
-                    if ((combo.Name.Contains("Joy") && !check_JoyAsButton.Checked) || (combo.Name.Contains("joy") && !check_JoyAsButton.Checked))
-                    {
-                        continue;
-                    }
+                //    if ((combo.Name.Contains("Joy") && !check_JoyAsButton.Checked) || (combo.Name.Contains("joy") && !check_JoyAsButton.Checked))
+                //    {
+                //        continue;
+                //    }
 
-                    if (m_dic_ui.ContainsKey(combo.Text))
-                    {
-                        attr.Type = ActionType.Mouse;
-                        attr.MouseAction = m_dic_ui[combo.Text];
-                    }
-                    else
-                    {
-                        attr.Type = ActionType.Keyboard;
-                        attr.Key = combo.Text;
-                    }
+                //    if (m_dic_mouseAction.ContainsKey(combo.Text))
+                //    {
+                //        attr.Type = ActionType.Mouse;
+                //        attr.MouseAction = m_dic_mouseAction[combo.Text];
+                //    }
+                //    else
+                //    {
+                //        attr.Type = ActionType.Keyboard;
+                //        attr.Key = combo.Text;
+                //    }
 
-                    newProfile.ActionAssignments.Add(model, new List<ActionAttribute> { attr });
-                }
+                //    newProfile.ActionAssignments.Add(model, new List<ActionAttribute> { attr });
+                //}
 
-                newProfile.Save(newProfile._path);
+                //newProfile.Save(newProfile._path);
             }
 
             m_isRunning = !m_isRunning;
@@ -717,25 +640,7 @@ namespace wiizard
             m_profileChanged = true;
             m_isRunning = false;
         }
-
-        private void check_UseNunchuk_CheckedChanged(object sender, EventArgs e)
-        {
-            m_profileChanged = true;
-            m_isRunning = false;
-
-            combo_nunchuk_joy_x.Enabled = combo_nunchuk_joy_y.Enabled
-            = combo_Joy_Up.Enabled = combo_Joy_Down.Enabled = combo_Joy_Left.Enabled = combo_Joy_Right.Enabled
-            = check_UseNunchuk.Checked;
-        }
-
-        private void check_JoyAsButton_CheckedChanged(object sender, EventArgs e)
-        {
-            m_profileChanged = true;
-            m_isRunning = false;
-
-            combo_Joy_Up.Enabled = combo_Joy_Down.Enabled = combo_Joy_Left.Enabled = combo_Joy_Right.Enabled = check_UseNunchuk.Checked;
-            combo_nunchuk_joy_x.Enabled = combo_nunchuk_joy_y.Enabled = !check_UseNunchuk.Checked;
-        }
+        
     }
 
 }
