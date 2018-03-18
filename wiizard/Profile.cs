@@ -20,6 +20,11 @@ namespace wiizard
         public string Behavior;
 
         /// <summary>
+        /// ジョイスティック入力をボタンとして使うかどうか
+        /// </summary>
+        public bool UseJoystickAsButton;
+
+        /// <summary>
         /// 動作の割り当て
         /// </summary>
         public Dictionary<WiimoteModel, List<ActionAttribute>> ActionAssignments;

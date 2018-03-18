@@ -17,8 +17,8 @@ namespace wiizard
 {
     /*
      * TODO
-     *  - ボタンの種類にN_STICK_UP, N_STICK_DOWN, N_STICK_LEFT,N_STICK_RIGHTを追加
-     *  - Profileに"UseJoystickAsButton"(bool)を追加
+     *  + ボタンの種類にN_STICK_UP, N_STICK_DOWN, N_STICK_LEFT,N_STICK_RIGHTを追加
+     *  + Profileに"UseJoystickAsButton"(bool)を追加
      *  - これらに伴う変更
      *  - UIを、左半分: マウス・キーボード割当設定, 右半分: ボタン/IR・加速度/詳細設定の3タブ構成に変更
      */
