@@ -15,28 +15,23 @@ using System.Drawing;
 
 namespace wiizard
 {
-    /*
-     * TODO
-     *  + ボタンの種類にN_STICK_UP, N_STICK_DOWN, N_STICK_LEFT,N_STICK_RIGHTを追加
-     *  + Profileに"UseJoystickAsButton"(bool)を追加
-     *  - これらに伴う変更
-     *  - UIを、左半分: マウス・キーボード割当設定, 右半分: ボタン/IR・加速度/詳細設定の3タブ構成に変更
-     */
     public partial class MainForm : Form
     {
         public MainForm()
         {
             InitializeComponent();
-
-            m_bMgr.Add(new StandardBehavior());
-            m_bMgr.Add(new MinecraftBehavior());
-
         }
 
         public void MainForm_Load(object sender, EventArgs e)
         {
-            // UIの初期化
-            combo_behavior.Items.AddRange(m_bMgr.GetBehaviorNames().ToArray());
+            prevState = new WiimoteState();
+            m_vkcodes = new VKCodes();
+            m_profiles = new List<Profile>();
+
+            // Behavior
+            m_bMgr = new BehaviorManager();
+            m_bMgr.Add(new StandardBehavior());
+            m_bMgr.Add(new MinecraftBehavior());
 
             // Profileフォルダの読み込み
             if (!Directory.Exists("./Profile/"))
@@ -52,7 +47,7 @@ namespace wiizard
 
             LoadProfiles();
 
-            // ファイル変更の検知
+            // フォルダ内JSON変更の検知
             m_fileSystemWatcher.Path = "./Profile";
             m_fileSystemWatcher.Filter = "*.json";
             m_fileSystemWatcher.SynchronizingObject = this;
@@ -116,9 +111,12 @@ namespace wiizard
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
-
+#if !DEBUG
                 Environment.Exit(1);
+#endif
             }
+
+            MenuItem_Profile.DropDownItems[0].PerformClick();
 
         }
 
@@ -144,30 +142,41 @@ namespace wiizard
         private delegate void UpdateWiimoteStateDelegate(WiimoteChangedEventArgs args);
         private delegate void UpdateExtensionChangedDelegate(WiimoteExtensionChangedEventArgs args);
 
-        private WiimoteState prevState = new WiimoteState(); // 直前の状態
-        private VKCodes m_vkcodes = new VKCodes();
+        /// <summary>
+        /// Wiiリモコンの直前の状態
+        /// </summary>
+        private WiimoteState prevState;
+        /// <summary>
+        /// デバッグ状態ウィンドウ
+        /// </summary>
         private DebugInfo m_debugInfo;
-        private List<Profile> m_profiles = new List<Profile>();
+
+        /// <summary>
+        /// 仮想キー辞書
+        /// </summary>
+        private VKCodes m_vkcodes;
+
+        /// <summary>
+        ///  プロファイル
+        /// </summary>
+        private List<Profile> m_profiles;
+        /// <summary>
+        /// 選択されているプロファイル
+        /// </summary>
         private Profile m_selectedProfile;
+
+        /// <summary>
+        /// 現在のBehavior
+        /// </summary>
         private Behavior m_behavior;
-        private BehaviorManager m_bMgr = new BehaviorManager();
+        private BehaviorManager m_bMgr;
 
-        private bool _m_isRunning = false;
-        private bool m_profileChanged = false;
+        private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
 
-        private Dictionary<string, MouseAction> m_dic_mouseAction = new Dictionary<string, MouseAction>
-        {
-            { "マウスのXを相対移動",    MouseAction.MoveDx },
-            { "マウスのYを相対移動",    MouseAction.MoveDy },
-            { "マウスのXを指定",        MouseAction.MoveX },
-            { "マウスのYを指定",        MouseAction.MoveY },
-            { "マウスのホイールを回転",  MouseAction.ScrollWheel },
-            { "マウスの左クリック",      MouseAction.LeftClick },
-            { "マウスの右クリック",      MouseAction.RightClick },
-            { "マウスの中クリック",      MouseAction.MiddleClick }
-        };
-
-
+        private bool _m_isRunning;
+        /// <summary>
+        /// 動作しているか
+        /// </summary>
         private bool m_isRunning
         {
             get
@@ -181,23 +190,24 @@ namespace wiizard
             }
         }
 
-        // m_isRunning変更イベント
+        /// <summary>
+        /// m_isRunning変更イベント
+        /// </summary>
         private void OnRunStateChanged()
         {
-            listBox_profile.Enabled = !m_isRunning;
-            btnRun.Text = m_profileChanged ? "保存・" : "";
-            btnRun.Text += m_isRunning ? "停止" : "開始";
+            btnRun.Text = m_isRunning ? "停止" : "開始";
         }
 
-        private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
+        /// <summary>
+        ///　バージョン
+        /// </summary>
         private const string VERSION = "BETA 0.3.0";
 
         private void LoadProfiles()
         {
-            m_isRunning = false;
-
             Thread.Sleep(100); // ファイルアクセス衝突防止
             m_profiles.Clear();
+            MenuItem_Profile.DropDownItems.Clear();
 
             foreach (var path in Directory.EnumerateFiles("./Profile/"))
             {
@@ -206,6 +216,10 @@ namespace wiizard
                     var profile = Profile.Load(path);
                     profile._path = path;
                     m_profiles.Add(profile);
+                    var item = new ToolStripMenuItem();
+                    item.Text = profile.Name;
+                    item.Click += MenuItem_Profile_Item_Clicked;
+                    MenuItem_Profile.DropDownItems.Add(item);
                 }
                 catch (Exception ex)
                 {
@@ -213,14 +227,20 @@ namespace wiizard
                     Environment.Exit(1);
                 }
             }
+        }
 
-            listBox_profile.Items.Clear();
-            foreach (var p in m_profiles)
+        private void MenuItem_Profile_Item_Clicked(object sender, EventArgs e)
+        {
+            var name = (sender as ToolStripMenuItem).Text;
+            
+            foreach(ToolStripMenuItem item in MenuItem_Profile.DropDownItems)
             {
-                listBox_profile.Items.Add(p.Name);
+                item.Checked = item.Text == name;
             }
-            listBox_profile.SelectedIndex = 0;
 
+            labName.Text = name;
+            m_selectedProfile = m_profiles.First(x => x.Name == name);
+            m_behavior = m_bMgr.GetBehavior(m_selectedProfile.Behavior);
         }
 
         private void m_fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
@@ -525,122 +545,10 @@ namespace wiizard
             MenuItem_autoReload.Checked = m_fileSystemWatcher.EnableRaisingEvents;
         }
 
-        private void listBox_profile_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            e.DrawBackground();
-
-            if (e.Index > -1)
-            {
-                Brush b = new SolidBrush(e.ForeColor);
-
-                if ((e.State & DrawItemState.Disabled) == DrawItemState.Disabled)
-                {
-                    if ((e.State & DrawItemState.Selected) != DrawItemState.Selected)
-                    {
-                        b = new SolidBrush(Color.Black);
-
-                        e.Graphics.FillRectangle(Brushes.LightGray, e.Bounds);
-                    }
-                }
-
-                var sf = new StringFormat();
-                sf.LineAlignment = StringAlignment.Center;
-
-                var itemText = (sender as ListBox).Items[e.Index].ToString();
-
-                e.Graphics.DrawString(itemText, e.Font, b, e.Bounds, sf);
-
-                b.Dispose();
-
-            }
-
-            e.DrawFocusRectangle();
-        }
-
-        private void listBox_profile_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            m_selectedProfile = m_profiles[(sender as ListBox).SelectedIndex];
-            m_behavior = m_bMgr.GetBehavior(m_selectedProfile.Behavior);
-
-            //// 現在の設定をUIに適用
-            //foreach (var combo in m_dic_combos.SelectMany(i => i.Value))
-            //{
-            //    var model = m_dic_combos.First(i => i.Value.Contains(combo)).Key;
-                
-            //}
-
-            //// Behaviorで指定されたものを無効化
-            //var disabledItem = m_behavior.GetDisabledItem();
-            //foreach (var p in m_dic_combos)
-            //{
-            //    foreach(var combo in p.Value)
-            //    {
-            //        if (disabledItem.Contains(p.Key))
-            //        {
-            //            combo.Enabled = false;
-            //            combo.Text = "無し";
-            //        }
-            //        else
-            //        {
-            //            combo.Enabled = true;
-            //        }
-            //    }
-            //}
-            
-            OnRunStateChanged();
-        }
-
         private void btnRun_Click(object sender, EventArgs e)
         {
-            // プロファイル変更の保存
-            if (m_profileChanged)
-            {
-                //var newProfile = new Profile();
-                //newProfile.Name = m_selectedProfile.Name;
-                //newProfile.Behavior = m_bMgr.GetBehavior(combo_behavior.Text, true).GetName();
-                //newProfile.ActionAssignments = new Dictionary<WiimoteModel, List<ActionAttribute>>();
-
-                //foreach (var combo in m_dic_combos.SelectMany(i => i.Value))
-                //{
-                //    var attr = new ActionAttribute();
-                //    var model = m_dic_combos.First(i => i.Value.Contains(combo)).Key;
-
-                //    if (!check_UseNunchuk.Checked && m_combos_nunchuk.Contains(combo))
-                //    {
-                //        continue;
-                //    }
-
-                //    if ((combo.Name.Contains("Joy") && !check_JoyAsButton.Checked) || (combo.Name.Contains("joy") && !check_JoyAsButton.Checked))
-                //    {
-                //        continue;
-                //    }
-
-                //    if (m_dic_mouseAction.ContainsKey(combo.Text))
-                //    {
-                //        attr.Type = ActionType.Mouse;
-                //        attr.MouseAction = m_dic_mouseAction[combo.Text];
-                //    }
-                //    else
-                //    {
-                //        attr.Type = ActionType.Keyboard;
-                //        attr.Key = combo.Text;
-                //    }
-
-                //    newProfile.ActionAssignments.Add(model, new List<ActionAttribute> { attr });
-                //}
-
-                //newProfile.Save(newProfile._path);
-            }
-
             m_isRunning = !m_isRunning;
         }
-
-        private void profile_UI_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            m_profileChanged = true;
-            m_isRunning = false;
-        }
-        
     }
 
 }
