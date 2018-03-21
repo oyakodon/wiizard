@@ -54,6 +54,7 @@
     <Compile Include="Behaviors\Behavior.cs" />
     <Compile Include="Behaviors\MinecraftBehavior.cs" />
     <Compile Include="Behaviors\StandardBehavior.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="DebugInfo.cs">
       <SubType>Form</SubType>
     </Compile>

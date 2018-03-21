@@ -31,15 +31,15 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.labStat = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.MenuItem_File = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItem_autoReload = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_Profile = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_EditProfile = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MenuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_debugInfo = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Readme = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Version = new System.Windows.Forms.ToolStripMenuItem();
             this.btnRun = new System.Windows.Forms.Button();
             this.labName = new System.Windows.Forms.Label();
-            this.MenuItem_Profile = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -63,7 +63,6 @@
             // menuStrip
             // 
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItem_File,
             this.MenuItem_Profile,
             this.MenuItem_Help});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
@@ -72,22 +71,28 @@
             this.menuStrip.TabIndex = 5;
             this.menuStrip.Text = "menuStrip";
             // 
-            // MenuItem_File
+            // MenuItem_Profile
             // 
-            this.MenuItem_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.MenuItem_autoReload});
-            this.MenuItem_File.Name = "MenuItem_File";
-            this.MenuItem_File.Size = new System.Drawing.Size(67, 20);
-            this.MenuItem_File.Text = "ファイル(&F)";
+            this.MenuItem_Profile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.MenuItem_EditProfile,
+            this.toolStripSeparator1});
+            this.MenuItem_Profile.Name = "MenuItem_Profile";
+            this.MenuItem_Profile.Size = new System.Drawing.Size(86, 20);
+            this.MenuItem_Profile.Text = "プロファイル(&P)";
             // 
-            // MenuItem_autoReload
+            // MenuItem_EditProfile
             // 
-            this.MenuItem_autoReload.Checked = true;
-            this.MenuItem_autoReload.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.MenuItem_autoReload.Name = "MenuItem_autoReload";
-            this.MenuItem_autoReload.Size = new System.Drawing.Size(200, 22);
-            this.MenuItem_autoReload.Text = "プロファイルの変更検知(&A)";
-            this.MenuItem_autoReload.Click += new System.EventHandler(this.MenuItem_autoReload_Click);
+            this.MenuItem_EditProfile.Name = "MenuItem_EditProfile";
+            this.MenuItem_EditProfile.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_EditProfile.Tag = "Invulnerable";
+            this.MenuItem_EditProfile.Text = "プロファイルの編集(&E)";
+            this.MenuItem_EditProfile.Click += new System.EventHandler(this.MenuItem_EditProfile_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Tag = "Invulnerable";
             // 
             // MenuItem_Help
             // 
@@ -102,21 +107,21 @@
             // MenuItem_debugInfo
             // 
             this.MenuItem_debugInfo.Name = "MenuItem_debugInfo";
-            this.MenuItem_debugInfo.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_debugInfo.Size = new System.Drawing.Size(157, 22);
             this.MenuItem_debugInfo.Text = "デバッグ情報(&D)";
             this.MenuItem_debugInfo.Click += new System.EventHandler(this.MenuItem_debugInfo_Click);
             // 
             // MenuItem_Readme
             // 
             this.MenuItem_Readme.Name = "MenuItem_Readme";
-            this.MenuItem_Readme.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_Readme.Size = new System.Drawing.Size(157, 22);
             this.MenuItem_Readme.Text = "Readme.md";
             this.MenuItem_Readme.Click += new System.EventHandler(this.MenuItem_Readme_Click);
             // 
             // MenuItem_Version
             // 
             this.MenuItem_Version.Name = "MenuItem_Version";
-            this.MenuItem_Version.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_Version.Size = new System.Drawing.Size(157, 22);
             this.MenuItem_Version.Text = "バージョン情報(&V)";
             this.MenuItem_Version.Click += new System.EventHandler(this.MenuItem_Version_Click);
             // 
@@ -141,12 +146,6 @@
             this.labName.Text = "(未選択)";
             this.labName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // MenuItem_Profile
-            // 
-            this.MenuItem_Profile.Name = "MenuItem_Profile";
-            this.MenuItem_Profile.Size = new System.Drawing.Size(86, 20);
-            this.MenuItem_Profile.Text = "プロファイル(&P)";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -157,7 +156,7 @@
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
             this.Name = "MainForm";
-            this.Text = "MainForm";
+            this.Text = "Wiizard";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
@@ -173,8 +172,6 @@
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel labStat;
         private System.Windows.Forms.MenuStrip menuStrip;
-        private System.Windows.Forms.ToolStripMenuItem MenuItem_File;
-        private System.Windows.Forms.ToolStripMenuItem MenuItem_autoReload;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Help;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Readme;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Version;
@@ -182,5 +179,7 @@
         private System.Windows.Forms.ToolStripMenuItem MenuItem_debugInfo;
         private System.Windows.Forms.Label labName;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Profile;
+        private System.Windows.Forms.ToolStripMenuItem MenuItem_EditProfile;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

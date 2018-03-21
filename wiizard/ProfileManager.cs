@@ -7,9 +7,6 @@ using System.Collections.Generic;
 
 using wiizard.Behaviors;
 
-using WiimoteLib;
-using Newtonsoft.Json;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 using System.Drawing;
 
@@ -75,18 +72,6 @@ namespace wiizard
 
             #endregion
 
-            // Profileフォルダの読み込み
-            if (!Directory.Exists("./Profile/"))
-            {
-                // Defaultプロファイルの作成
-                Directory.CreateDirectory("./Profile/");
-                var defaultProfile = new Profile();
-                defaultProfile.Name = "Default";
-                defaultProfile.Behavior = (new StandardBehavior()).GetName();
-                defaultProfile.ActionAssignments = new Dictionary<WiimoteModel, List<ActionAttribute>>();
-                defaultProfile.Save("./Profile/default.json");
-            }
-
             LoadProfiles();
 
             // フォルダ内JSON変更の検知
@@ -120,23 +105,10 @@ namespace wiizard
         /// 選択されているプロファイル
         /// </summary>
         private Profile m_selectedProfile;
-        /// <summary>
-        /// プロファイルが変更されたか
-        /// </summary>
-        private bool m_profileChanged;
 
-        /// <summary>
-        /// 現在のBehavior
-        /// </summary>
-        private Behavior m_behavior;
         private BehaviorManager m_bMgr;
 
         private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
-
-        /// <summary>
-        ///　バージョン
-        /// </summary>
-        private const string VERSION = "BETABETA 0.1.0";
 
         private void LoadProfiles()
         {
@@ -158,6 +130,7 @@ namespace wiizard
                 }
             }
 
+            // ListBoxに反映
             listBox_profile.Items.Clear();
             foreach (var p in m_profiles)
             {
@@ -176,12 +149,12 @@ namespace wiizard
 
         private void MenuItem_Readme_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/oyakodon/wiizard/tree/master/README.md");
+            System.Diagnostics.Process.Start(Configuration.README_URL);
         }
 
         private void MenuItem_Version_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("< Wiizard >\n\nVer. " + VERSION + "\n\n作者: Oyakodon\n(https://github.com/oyakodon/)", "バージョン情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show(Configuration.GetAuthor(), "バージョン情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void MenuItem_autoReload_Click(object sender, EventArgs e)
@@ -225,7 +198,6 @@ namespace wiizard
         private void listBox_profile_SelectedIndexChanged(object sender, EventArgs e)
         {
             m_selectedProfile = m_profiles[(sender as ListBox).SelectedIndex];
-            m_behavior = m_bMgr.GetBehavior(m_selectedProfile.Behavior);
 
             //// 現在の設定をUIに適用
             //foreach (var combo in m_dic_combos.SelectMany(i => i.Value))

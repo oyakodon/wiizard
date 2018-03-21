@@ -8,10 +8,8 @@ using System.Collections.Generic;
 using wiizard.Behaviors;
 
 using WiimoteLib;
-using Newtonsoft.Json;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
-using System.Drawing;
 
 namespace wiizard
 {
@@ -46,14 +44,6 @@ namespace wiizard
             }
 
             LoadProfiles();
-
-            // フォルダ内JSON変更の検知
-            m_fileSystemWatcher.Path = "./Profile";
-            m_fileSystemWatcher.Filter = "*.json";
-            m_fileSystemWatcher.SynchronizingObject = this;
-            m_fileSystemWatcher.NotifyFilter = NotifyFilters.LastAccess;
-            m_fileSystemWatcher.Changed += m_fileSystemWatcher_Changed;
-            m_fileSystemWatcher.EnableRaisingEvents = true;　//監視を開始
 
             m_wm = new Wiimote();
 
@@ -116,8 +106,6 @@ namespace wiizard
 #endif
             }
 
-            MenuItem_Profile.DropDownItems[0].PerformClick();
-
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -127,6 +115,11 @@ namespace wiizard
 
         private void MenuItem_debugInfo_Click(object sender, EventArgs e)
         {
+            if (m_debugInfo == null)
+            {
+                return;
+            }
+
             MenuItem_debugInfo.Checked = !MenuItem_debugInfo.Checked;
             if (MenuItem_debugInfo.Checked)
             {
@@ -171,8 +164,6 @@ namespace wiizard
         private Behavior m_behavior;
         private BehaviorManager m_bMgr;
 
-        private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
-
         private bool _m_isRunning;
         /// <summary>
         /// 動作しているか
@@ -198,28 +189,31 @@ namespace wiizard
             btnRun.Text = m_isRunning ? "停止" : "開始";
         }
 
-        /// <summary>
-        ///　バージョン
-        /// </summary>
-        private const string VERSION = "BETA 0.3.0";
-
         private void LoadProfiles()
         {
+            m_isRunning = false;
             Thread.Sleep(100); // ファイルアクセス衝突防止
-            m_profiles.Clear();
-            MenuItem_Profile.DropDownItems.Clear();
 
+            m_profiles.Clear();
+            // Listにキャストして複製
+            var items = MenuItem_Profile.DropDownItems.Cast<ToolStripItem>().ToList();
+            // 必要なMenuItem以外を削除
+            items.RemoveAll(x => (string)x.Tag != "Invulnerable");
+
+            // プロファイルのロード
             foreach (var path in Directory.EnumerateFiles("./Profile/"))
             {
                 try
                 {
                     var profile = Profile.Load(path);
-                    profile._path = path;
                     m_profiles.Add(profile);
+
+                    // MenuItemの追加
                     var item = new ToolStripMenuItem();
                     item.Text = profile.Name;
                     item.Click += MenuItem_Profile_Item_Clicked;
-                    MenuItem_Profile.DropDownItems.Add(item);
+
+                    items.Add(item);
                 }
                 catch (Exception ex)
                 {
@@ -227,27 +221,27 @@ namespace wiizard
                     Environment.Exit(1);
                 }
             }
+
+            // DropDownItemに適用
+            MenuItem_Profile.DropDownItems.Clear();
+            MenuItem_Profile.DropDownItems.AddRange(items.ToArray());
+
+            // 一番上のプロファイルを選択
+            items.First(x => (string)x.Tag != "Invulnerable").PerformClick();
         }
 
         private void MenuItem_Profile_Item_Clicked(object sender, EventArgs e)
         {
             var name = (sender as ToolStripMenuItem).Text;
-            
-            foreach(ToolStripMenuItem item in MenuItem_Profile.DropDownItems)
-            {
-                item.Checked = item.Text == name;
-            }
-
             labName.Text = name;
             m_selectedProfile = m_profiles.First(x => x.Name == name);
             m_behavior = m_bMgr.GetBehavior(m_selectedProfile.Behavior);
-        }
 
-        private void m_fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
-        {
-            labStat.Text = "プロファイルの変更を適用しました. (" + DateTime.Now.ToShortTimeString() + ")";
-            System.Media.SystemSounds.Asterisk.Play();
-            LoadProfiles();
+            var items = MenuItem_Profile.DropDownItems.Cast<ToolStripItem>();
+            foreach (ToolStripMenuItem item in items.Where(x => (string)x.Tag != "Invulnerable"))
+            {
+                item.Checked = item.Text == name;
+            }
         }
 
         private void UpdateWiimoteChanged(WiimoteChangedEventArgs args)
@@ -531,23 +525,26 @@ namespace wiizard
 
         private void MenuItem_Readme_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/oyakodon/wiizard/tree/master/README.md");
+            System.Diagnostics.Process.Start(Configuration.README_URL);
         }
 
         private void MenuItem_Version_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("< Wiizard >\n\nVer. " + VERSION + "\n\n作者: Oyakodon\n(https://github.com/oyakodon/)", "バージョン情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void MenuItem_autoReload_Click(object sender, EventArgs e)
-        {
-            m_fileSystemWatcher.EnableRaisingEvents = !m_fileSystemWatcher.EnableRaisingEvents;
-            MenuItem_autoReload.Checked = m_fileSystemWatcher.EnableRaisingEvents;
+            MessageBox.Show(Configuration.GetAuthor(), "バージョン情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnRun_Click(object sender, EventArgs e)
         {
             m_isRunning = !m_isRunning;
+        }
+
+        private void MenuItem_EditProfile_Click(object sender, EventArgs e)
+        {
+            var pmgr = new ProfileManager();
+            this.Hide();
+            pmgr.ShowDialog();
+            LoadProfiles();
+            this.Show();
         }
     }
 
