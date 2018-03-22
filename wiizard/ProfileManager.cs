@@ -74,14 +74,6 @@ namespace wiizard
 
             LoadProfiles();
 
-            // フォルダ内JSON変更の検知
-            m_fileSystemWatcher.Path = "./Profile";
-            m_fileSystemWatcher.Filter = "*.json";
-            m_fileSystemWatcher.SynchronizingObject = this;
-            m_fileSystemWatcher.NotifyFilter = NotifyFilters.LastAccess;
-            m_fileSystemWatcher.Changed += m_fileSystemWatcher_Changed;
-            m_fileSystemWatcher.EnableRaisingEvents = true;　//監視を開始
-
         }
 
         /// <summary>
@@ -107,8 +99,6 @@ namespace wiizard
         private Profile m_selectedProfile;
 
         private BehaviorManager m_bMgr;
-
-        private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
 
         private void LoadProfiles()
         {
@@ -140,13 +130,6 @@ namespace wiizard
 
         }
 
-        private void m_fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
-        {
-            labStat.Text = "プロファイルの変更を適用しました. (" + DateTime.Now.ToShortTimeString() + ")";
-            System.Media.SystemSounds.Asterisk.Play();
-            LoadProfiles();
-        }
-
         private void MenuItem_Readme_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(Configuration.README_URL);
@@ -155,12 +138,6 @@ namespace wiizard
         private void MenuItem_Version_Click(object sender, EventArgs e)
         {
             MessageBox.Show(Configuration.GetAuthor(), "バージョン情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void MenuItem_autoReload_Click(object sender, EventArgs e)
-        {
-            m_fileSystemWatcher.EnableRaisingEvents = !m_fileSystemWatcher.EnableRaisingEvents;
-            MenuItem_autoReload.Checked = m_fileSystemWatcher.EnableRaisingEvents;
         }
 
         private void listBox_profile_DrawItem(object sender, DrawItemEventArgs e)
@@ -268,7 +245,14 @@ namespace wiizard
 
         private void panel_config_wiiimg_MouseUp(object sender, MouseEventArgs e)
         {
-
+            var rect = new Rectangle(55, 33, 17, 24);
+            if (rect.Contains(e.Location))
+            {
+                var g = picBox_wii.CreateGraphics();
+                g.DrawRectangle(new Pen(Brushes.Black), rect);
+                g.Dispose();
+            }
+            labStat.Text = $"({e.X},{e.Y})";
         }
 
         private void radioButtons_CheckedChanged(object sender, EventArgs e)

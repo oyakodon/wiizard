@@ -45,6 +45,14 @@ namespace wiizard
 
             LoadProfiles();
 
+            // フォルダ内JSON変更の検知
+            m_fileSystemWatcher.Path = "./Profile";
+            m_fileSystemWatcher.Filter = "*.json";
+            m_fileSystemWatcher.SynchronizingObject = this;
+            m_fileSystemWatcher.NotifyFilter = NotifyFilters.LastAccess;
+            m_fileSystemWatcher.Changed += m_fileSystemWatcher_Changed;
+            // m_fileSystemWatcher.EnableRaisingEvents = true;　//監視を開始
+
             m_wm = new Wiimote();
 
             try
@@ -164,6 +172,8 @@ namespace wiizard
         private Behavior m_behavior;
         private BehaviorManager m_bMgr;
 
+        private FileSystemWatcher m_fileSystemWatcher = new FileSystemWatcher();
+
         private bool _m_isRunning;
         /// <summary>
         /// 動作しているか
@@ -187,6 +197,19 @@ namespace wiizard
         private void OnRunStateChanged()
         {
             btnRun.Text = m_isRunning ? "停止" : "開始";
+        }
+
+        private void m_fileSystemWatcher_Changed(object sender, FileSystemEventArgs e)
+        {
+            labStat.Text = "プロファイルの変更を適用しました. (" + DateTime.Now.ToShortTimeString() + ")";
+            System.Media.SystemSounds.Asterisk.Play();
+            LoadProfiles();
+        }
+
+        private void MenuItem_autoReload_Click(object sender, EventArgs e)
+        {
+            m_fileSystemWatcher.EnableRaisingEvents = !m_fileSystemWatcher.EnableRaisingEvents;
+            MenuItem_autoReload.Checked = m_fileSystemWatcher.EnableRaisingEvents;
         }
 
         private void LoadProfiles()

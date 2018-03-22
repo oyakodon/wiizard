@@ -33,7 +33,6 @@
             this.MenuItem_File = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_newProfile = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_deleteProfile = new System.Windows.Forms.ToolStripMenuItem();
-            this.MenuItem_autoReload = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Readme = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_Version = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,8 +120,7 @@
             // 
             this.MenuItem_File.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuItem_newProfile,
-            this.MenuItem_deleteProfile,
-            this.MenuItem_autoReload});
+            this.MenuItem_deleteProfile});
             this.MenuItem_File.Name = "MenuItem_File";
             this.MenuItem_File.Size = new System.Drawing.Size(67, 20);
             this.MenuItem_File.Text = "ファイル(&F)";
@@ -130,23 +128,14 @@
             // MenuItem_newProfile
             // 
             this.MenuItem_newProfile.Name = "MenuItem_newProfile";
-            this.MenuItem_newProfile.Size = new System.Drawing.Size(200, 22);
+            this.MenuItem_newProfile.Size = new System.Drawing.Size(180, 22);
             this.MenuItem_newProfile.Text = "新規プロファイル(&N)";
             // 
             // MenuItem_deleteProfile
             // 
             this.MenuItem_deleteProfile.Name = "MenuItem_deleteProfile";
-            this.MenuItem_deleteProfile.Size = new System.Drawing.Size(200, 22);
+            this.MenuItem_deleteProfile.Size = new System.Drawing.Size(180, 22);
             this.MenuItem_deleteProfile.Text = "プロファイルの削除(&D)";
-            // 
-            // MenuItem_autoReload
-            // 
-            this.MenuItem_autoReload.Checked = true;
-            this.MenuItem_autoReload.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.MenuItem_autoReload.Name = "MenuItem_autoReload";
-            this.MenuItem_autoReload.Size = new System.Drawing.Size(200, 22);
-            this.MenuItem_autoReload.Text = "プロファイルの変更検知(&A)";
-            this.MenuItem_autoReload.Click += new System.EventHandler(this.MenuItem_autoReload_Click);
             // 
             // MenuItem_Help
             // 
@@ -160,14 +149,14 @@
             // MenuItem_Readme
             // 
             this.MenuItem_Readme.Name = "MenuItem_Readme";
-            this.MenuItem_Readme.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_Readme.Size = new System.Drawing.Size(157, 22);
             this.MenuItem_Readme.Text = "Readme.md";
             this.MenuItem_Readme.Click += new System.EventHandler(this.MenuItem_Readme_Click);
             // 
             // MenuItem_Version
             // 
             this.MenuItem_Version.Name = "MenuItem_Version";
-            this.MenuItem_Version.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_Version.Size = new System.Drawing.Size(157, 22);
             this.MenuItem_Version.Text = "バージョン情報(&V)";
             this.MenuItem_Version.Click += new System.EventHandler(this.MenuItem_Version_Click);
             // 
@@ -786,7 +775,6 @@
         private System.Windows.Forms.SplitContainer splitContainer;
         private System.Windows.Forms.ListBox listBox_profile;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_newProfile;
-        private System.Windows.Forms.ToolStripMenuItem MenuItem_autoReload;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_deleteProfile;
         private System.Windows.Forms.TabControl tabControl_config;
         private System.Windows.Forms.TabPage tabPage_buttons;

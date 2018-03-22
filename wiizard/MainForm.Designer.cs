@@ -40,6 +40,7 @@
             this.MenuItem_Version = new System.Windows.Forms.ToolStripMenuItem();
             this.btnRun = new System.Windows.Forms.Button();
             this.labName = new System.Windows.Forms.Label();
+            this.MenuItem_autoReload = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -75,6 +76,7 @@
             // 
             this.MenuItem_Profile.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenuItem_EditProfile,
+            this.MenuItem_autoReload,
             this.toolStripSeparator1});
             this.MenuItem_Profile.Name = "MenuItem_Profile";
             this.MenuItem_Profile.Size = new System.Drawing.Size(86, 20);
@@ -83,7 +85,7 @@
             // MenuItem_EditProfile
             // 
             this.MenuItem_EditProfile.Name = "MenuItem_EditProfile";
-            this.MenuItem_EditProfile.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_EditProfile.Size = new System.Drawing.Size(200, 22);
             this.MenuItem_EditProfile.Tag = "Invulnerable";
             this.MenuItem_EditProfile.Text = "プロファイルの編集(&E)";
             this.MenuItem_EditProfile.Click += new System.EventHandler(this.MenuItem_EditProfile_Click);
@@ -91,7 +93,7 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(197, 6);
             this.toolStripSeparator1.Tag = "Invulnerable";
             // 
             // MenuItem_Help
@@ -146,6 +148,14 @@
             this.labName.Text = "(未選択)";
             this.labName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // MenuItem_autoReload
+            // 
+            this.MenuItem_autoReload.Name = "MenuItem_autoReload";
+            this.MenuItem_autoReload.Size = new System.Drawing.Size(200, 22);
+            this.MenuItem_autoReload.Tag = "Invulnerable";
+            this.MenuItem_autoReload.Text = "プロファイルの変更検知(&A)";
+            this.MenuItem_autoReload.Click += new System.EventHandler(this.MenuItem_autoReload_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -181,5 +191,6 @@
         private System.Windows.Forms.ToolStripMenuItem MenuItem_Profile;
         private System.Windows.Forms.ToolStripMenuItem MenuItem_EditProfile;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem MenuItem_autoReload;
     }
 }
