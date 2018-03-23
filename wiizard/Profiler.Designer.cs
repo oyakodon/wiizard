@@ -1,6 +1,6 @@
 ﻿namespace wiizard
 {
-    partial class ProfileManager
+    partial class Profiler
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ProfileManager));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Profiler));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuItem_File = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_newProfile = new System.Windows.Forms.ToolStripMenuItem();
@@ -41,6 +41,7 @@
             this.panel_profile = new System.Windows.Forms.Panel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.listBox_profile = new System.Windows.Forms.ListBox();
+            this.btnSave = new System.Windows.Forms.Button();
             this.combo_mouse = new System.Windows.Forms.ComboBox();
             this.combo_key = new System.Windows.Forms.ComboBox();
             this.radioBtn_none = new System.Windows.Forms.RadioButton();
@@ -48,33 +49,13 @@
             this.radioBtn_key = new System.Windows.Forms.RadioButton();
             this.label20 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
-            this.btnChange = new System.Windows.Forms.Button();
+            this.btnApply = new System.Windows.Forms.Button();
             this.tabControl_config = new System.Windows.Forms.TabControl();
             this.tabPage_buttons = new System.Windows.Forms.TabPage();
             this.panel_config_wiiimg = new System.Windows.Forms.Panel();
             this.check_useJoyAsBtn = new System.Windows.Forms.CheckBox();
             this.picBox_wii = new System.Windows.Forms.PictureBox();
             this.tabPage_AccIR = new System.Windows.Forms.TabPage();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.combo_ir_y = new System.Windows.Forms.ComboBox();
-            this.combo_ir_x = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.combo_nunchuk_joy_y = new System.Windows.Forms.ComboBox();
-            this.combo_nunchuk_joy_x = new System.Windows.Forms.ComboBox();
-            this.combo_nunchuk_acc_y = new System.Windows.Forms.ComboBox();
-            this.combo_nunchuk_acc_x = new System.Windows.Forms.ComboBox();
-            this.combo_acc_y = new System.Windows.Forms.ComboBox();
-            this.combo_acc_x = new System.Windows.Forms.ComboBox();
             this.tabPage_advconfig = new System.Windows.Forms.TabPage();
             this.btnDeleteAction = new System.Windows.Forms.Button();
             this.num_delay = new System.Windows.Forms.NumericUpDown();
@@ -88,6 +69,8 @@
             this.combo_models = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
+            this.panel_config_accIr = new System.Windows.Forms.Panel();
+            this.picBox_wii_accIr = new System.Windows.Forms.PictureBox();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.panel_profile.SuspendLayout();
@@ -103,6 +86,8 @@
             this.tabPage_advconfig.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).BeginInit();
+            this.panel_config_accIr.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -128,13 +113,13 @@
             // MenuItem_newProfile
             // 
             this.MenuItem_newProfile.Name = "MenuItem_newProfile";
-            this.MenuItem_newProfile.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_newProfile.Size = new System.Drawing.Size(176, 22);
             this.MenuItem_newProfile.Text = "新規プロファイル(&N)";
             // 
             // MenuItem_deleteProfile
             // 
             this.MenuItem_deleteProfile.Name = "MenuItem_deleteProfile";
-            this.MenuItem_deleteProfile.Size = new System.Drawing.Size(180, 22);
+            this.MenuItem_deleteProfile.Size = new System.Drawing.Size(176, 22);
             this.MenuItem_deleteProfile.Text = "プロファイルの削除(&D)";
             // 
             // MenuItem_Help
@@ -199,6 +184,7 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
+            this.splitContainer.Panel2.Controls.Add(this.btnSave);
             this.splitContainer.Panel2.Controls.Add(this.combo_mouse);
             this.splitContainer.Panel2.Controls.Add(this.combo_key);
             this.splitContainer.Panel2.Controls.Add(this.radioBtn_none);
@@ -206,7 +192,7 @@
             this.splitContainer.Panel2.Controls.Add(this.radioBtn_key);
             this.splitContainer.Panel2.Controls.Add(this.label20);
             this.splitContainer.Panel2.Controls.Add(this.label16);
-            this.splitContainer.Panel2.Controls.Add(this.btnChange);
+            this.splitContainer.Panel2.Controls.Add(this.btnApply);
             this.splitContainer.Panel2.Controls.Add(this.tabControl_config);
             this.splitContainer.Size = new System.Drawing.Size(929, 462);
             this.splitContainer.SplitterDistance = 196;
@@ -225,12 +211,23 @@
             this.listBox_profile.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.listBox_profile_DrawItem);
             this.listBox_profile.SelectedIndexChanged += new System.EventHandler(this.listBox_profile_SelectedIndexChanged);
             // 
+            // btnSave
+            // 
+            this.btnSave.Font = new System.Drawing.Font("MS UI Gothic", 9F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.btnSave.Location = new System.Drawing.Point(532, 405);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(171, 37);
+            this.btnSave.TabIndex = 23;
+            this.btnSave.Text = "設定ファイルに保存(&S)";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // combo_mouse
             // 
             this.combo_mouse.DropDownWidth = 120;
             this.combo_mouse.Enabled = false;
             this.combo_mouse.FormattingEnabled = true;
-            this.combo_mouse.Location = new System.Drawing.Point(625, 212);
+            this.combo_mouse.Location = new System.Drawing.Point(614, 187);
             this.combo_mouse.Name = "combo_mouse";
             this.combo_mouse.Size = new System.Drawing.Size(79, 20);
             this.combo_mouse.TabIndex = 22;
@@ -240,7 +237,7 @@
             this.combo_key.DropDownWidth = 120;
             this.combo_key.Enabled = false;
             this.combo_key.FormattingEnabled = true;
-            this.combo_key.Location = new System.Drawing.Point(625, 131);
+            this.combo_key.Location = new System.Drawing.Point(614, 106);
             this.combo_key.Name = "combo_key";
             this.combo_key.Size = new System.Drawing.Size(79, 20);
             this.combo_key.TabIndex = 19;
@@ -248,7 +245,7 @@
             // radioBtn_none
             // 
             this.radioBtn_none.AutoSize = true;
-            this.radioBtn_none.Location = new System.Drawing.Point(532, 263);
+            this.radioBtn_none.Location = new System.Drawing.Point(521, 238);
             this.radioBtn_none.Name = "radioBtn_none";
             this.radioBtn_none.Size = new System.Drawing.Size(83, 16);
             this.radioBtn_none.TabIndex = 21;
@@ -260,7 +257,7 @@
             // radioBtn_mouse
             // 
             this.radioBtn_mouse.AutoSize = true;
-            this.radioBtn_mouse.Location = new System.Drawing.Point(532, 189);
+            this.radioBtn_mouse.Location = new System.Drawing.Point(521, 164);
             this.radioBtn_mouse.Name = "radioBtn_mouse";
             this.radioBtn_mouse.Size = new System.Drawing.Size(50, 16);
             this.radioBtn_mouse.TabIndex = 20;
@@ -272,7 +269,7 @@
             // radioBtn_key
             // 
             this.radioBtn_key.AutoSize = true;
-            this.radioBtn_key.Location = new System.Drawing.Point(532, 109);
+            this.radioBtn_key.Location = new System.Drawing.Point(521, 84);
             this.radioBtn_key.Name = "radioBtn_key";
             this.radioBtn_key.Size = new System.Drawing.Size(72, 16);
             this.radioBtn_key.TabIndex = 18;
@@ -284,7 +281,7 @@
             // label20
             // 
             this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(561, 215);
+            this.label20.Location = new System.Drawing.Point(550, 190);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(31, 12);
             this.label20.TabIndex = 17;
@@ -293,20 +290,20 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(561, 134);
+            this.label16.Location = new System.Drawing.Point(550, 109);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(27, 12);
             this.label16.TabIndex = 16;
             this.label16.Text = "キー:";
             // 
-            // btnChange
+            // btnApply
             // 
-            this.btnChange.Location = new System.Drawing.Point(532, 395);
-            this.btnChange.Name = "btnChange";
-            this.btnChange.Size = new System.Drawing.Size(171, 37);
-            this.btnChange.TabIndex = 15;
-            this.btnChange.Text = "適用・保存";
-            this.btnChange.UseVisualStyleBackColor = true;
+            this.btnApply.Location = new System.Drawing.Point(532, 352);
+            this.btnApply.Name = "btnApply";
+            this.btnApply.Size = new System.Drawing.Size(171, 37);
+            this.btnApply.TabIndex = 15;
+            this.btnApply.Text = "適用(&A)";
+            this.btnApply.UseVisualStyleBackColor = true;
             // 
             // tabControl_config
             // 
@@ -340,7 +337,7 @@
             this.panel_config_wiiimg.Padding = new System.Windows.Forms.Padding(10);
             this.panel_config_wiiimg.Size = new System.Drawing.Size(488, 414);
             this.panel_config_wiiimg.TabIndex = 2;
-            this.panel_config_wiiimg.MouseUp += new System.Windows.Forms.MouseEventHandler(this.panel_config_wiiimg_MouseUp);
+            this.panel_config_wiiimg.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel_config_wiiimg_MouseClick);
             // 
             // check_useJoyAsBtn
             // 
@@ -358,226 +355,25 @@
             this.picBox_wii.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picBox_wii.Enabled = false;
             this.picBox_wii.Image = ((System.Drawing.Image)(resources.GetObject("picBox_wii.Image")));
+            this.picBox_wii.InitialImage = ((System.Drawing.Image)(resources.GetObject("picBox_wii.InitialImage")));
             this.picBox_wii.Location = new System.Drawing.Point(10, 10);
             this.picBox_wii.Name = "picBox_wii";
             this.picBox_wii.Size = new System.Drawing.Size(468, 394);
-            this.picBox_wii.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picBox_wii.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picBox_wii.TabIndex = 1;
             this.picBox_wii.TabStop = false;
+            this.picBox_wii.Paint += new System.Windows.Forms.PaintEventHandler(this.picBox_wii_Paint);
             // 
             // tabPage_AccIR
             // 
             this.tabPage_AccIR.BackColor = System.Drawing.Color.Transparent;
-            this.tabPage_AccIR.Controls.Add(this.label11);
-            this.tabPage_AccIR.Controls.Add(this.label12);
-            this.tabPage_AccIR.Controls.Add(this.label9);
-            this.tabPage_AccIR.Controls.Add(this.label10);
-            this.tabPage_AccIR.Controls.Add(this.combo_ir_y);
-            this.tabPage_AccIR.Controls.Add(this.combo_ir_x);
-            this.tabPage_AccIR.Controls.Add(this.label8);
-            this.tabPage_AccIR.Controls.Add(this.label6);
-            this.tabPage_AccIR.Controls.Add(this.label7);
-            this.tabPage_AccIR.Controls.Add(this.label4);
-            this.tabPage_AccIR.Controls.Add(this.label5);
-            this.tabPage_AccIR.Controls.Add(this.label3);
-            this.tabPage_AccIR.Controls.Add(this.label2);
-            this.tabPage_AccIR.Controls.Add(this.label1);
-            this.tabPage_AccIR.Controls.Add(this.combo_nunchuk_joy_y);
-            this.tabPage_AccIR.Controls.Add(this.combo_nunchuk_joy_x);
-            this.tabPage_AccIR.Controls.Add(this.combo_nunchuk_acc_y);
-            this.tabPage_AccIR.Controls.Add(this.combo_nunchuk_acc_x);
-            this.tabPage_AccIR.Controls.Add(this.combo_acc_y);
-            this.tabPage_AccIR.Controls.Add(this.combo_acc_x);
+            this.tabPage_AccIR.Controls.Add(this.panel_config_accIr);
             this.tabPage_AccIR.Location = new System.Drawing.Point(4, 22);
             this.tabPage_AccIR.Name = "tabPage_AccIR";
             this.tabPage_AccIR.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_AccIR.Size = new System.Drawing.Size(494, 420);
             this.tabPage_AccIR.TabIndex = 1;
             this.tabPage_AccIR.Text = "加速度・IR";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(49, 238);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(113, 12);
-            this.label11.TabIndex = 19;
-            this.label11.Text = "ヌンチャクジョイスティック";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(121, 84);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(41, 12);
-            this.label12.TabIndex = 18;
-            this.label12.Text = "赤外線";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(168, 110);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(14, 12);
-            this.label9.TabIndex = 17;
-            this.label9.Text = "Y:";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(168, 84);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(14, 12);
-            this.label10.TabIndex = 16;
-            this.label10.Text = "X:";
-            // 
-            // combo_ir_y
-            // 
-            this.combo_ir_y.DropDownWidth = 120;
-            this.combo_ir_y.FormattingEnabled = true;
-            this.combo_ir_y.Location = new System.Drawing.Point(188, 107);
-            this.combo_ir_y.Name = "combo_ir_y";
-            this.combo_ir_y.Size = new System.Drawing.Size(95, 20);
-            this.combo_ir_y.TabIndex = 15;
-            // 
-            // combo_ir_x
-            // 
-            this.combo_ir_x.DropDownWidth = 120;
-            this.combo_ir_x.FormattingEnabled = true;
-            this.combo_ir_x.Location = new System.Drawing.Point(188, 81);
-            this.combo_ir_x.Name = "combo_ir_x";
-            this.combo_ir_x.Size = new System.Drawing.Size(95, 20);
-            this.combo_ir_x.TabIndex = 14;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(78, 186);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(84, 12);
-            this.label8.TabIndex = 13;
-            this.label8.Text = "ヌンチャク加速度";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(168, 264);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(14, 12);
-            this.label6.TabIndex = 12;
-            this.label6.Text = "Y:";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(168, 238);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(14, 12);
-            this.label7.TabIndex = 11;
-            this.label7.Text = "X:";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(168, 212);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(14, 12);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "Y:";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(168, 186);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(14, 12);
-            this.label5.TabIndex = 9;
-            this.label5.Text = "X:";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(168, 58);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(14, 12);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Y:";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(168, 32);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(14, 12);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "X:";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(88, 32);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(74, 12);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "リモコン加速度";
-            // 
-            // combo_nunchuk_joy_y
-            // 
-            this.combo_nunchuk_joy_y.DropDownWidth = 120;
-            this.combo_nunchuk_joy_y.Enabled = false;
-            this.combo_nunchuk_joy_y.FormattingEnabled = true;
-            this.combo_nunchuk_joy_y.Location = new System.Drawing.Point(188, 261);
-            this.combo_nunchuk_joy_y.Name = "combo_nunchuk_joy_y";
-            this.combo_nunchuk_joy_y.Size = new System.Drawing.Size(95, 20);
-            this.combo_nunchuk_joy_y.TabIndex = 5;
-            // 
-            // combo_nunchuk_joy_x
-            // 
-            this.combo_nunchuk_joy_x.DropDownWidth = 120;
-            this.combo_nunchuk_joy_x.Enabled = false;
-            this.combo_nunchuk_joy_x.FormattingEnabled = true;
-            this.combo_nunchuk_joy_x.Location = new System.Drawing.Point(188, 235);
-            this.combo_nunchuk_joy_x.Name = "combo_nunchuk_joy_x";
-            this.combo_nunchuk_joy_x.Size = new System.Drawing.Size(95, 20);
-            this.combo_nunchuk_joy_x.TabIndex = 4;
-            // 
-            // combo_nunchuk_acc_y
-            // 
-            this.combo_nunchuk_acc_y.DropDownWidth = 120;
-            this.combo_nunchuk_acc_y.Enabled = false;
-            this.combo_nunchuk_acc_y.FormattingEnabled = true;
-            this.combo_nunchuk_acc_y.Location = new System.Drawing.Point(188, 209);
-            this.combo_nunchuk_acc_y.Name = "combo_nunchuk_acc_y";
-            this.combo_nunchuk_acc_y.Size = new System.Drawing.Size(95, 20);
-            this.combo_nunchuk_acc_y.TabIndex = 3;
-            // 
-            // combo_nunchuk_acc_x
-            // 
-            this.combo_nunchuk_acc_x.DropDownWidth = 120;
-            this.combo_nunchuk_acc_x.Enabled = false;
-            this.combo_nunchuk_acc_x.FormattingEnabled = true;
-            this.combo_nunchuk_acc_x.Location = new System.Drawing.Point(188, 183);
-            this.combo_nunchuk_acc_x.Name = "combo_nunchuk_acc_x";
-            this.combo_nunchuk_acc_x.Size = new System.Drawing.Size(95, 20);
-            this.combo_nunchuk_acc_x.TabIndex = 2;
-            // 
-            // combo_acc_y
-            // 
-            this.combo_acc_y.DropDownWidth = 120;
-            this.combo_acc_y.FormattingEnabled = true;
-            this.combo_acc_y.Location = new System.Drawing.Point(188, 55);
-            this.combo_acc_y.Name = "combo_acc_y";
-            this.combo_acc_y.Size = new System.Drawing.Size(95, 20);
-            this.combo_acc_y.TabIndex = 1;
-            // 
-            // combo_acc_x
-            // 
-            this.combo_acc_x.DropDownWidth = 120;
-            this.combo_acc_x.FormattingEnabled = true;
-            this.combo_acc_x.Location = new System.Drawing.Point(188, 29);
-            this.combo_acc_x.Name = "combo_acc_x";
-            this.combo_acc_x.Size = new System.Drawing.Size(95, 20);
-            this.combo_acc_x.TabIndex = 0;
             // 
             // tabPage_advconfig
             // 
@@ -607,7 +403,7 @@
             this.btnDeleteAction.Name = "btnDeleteAction";
             this.btnDeleteAction.Size = new System.Drawing.Size(171, 26);
             this.btnDeleteAction.TabIndex = 23;
-            this.btnDeleteAction.Text = "この動作を削除・保存";
+            this.btnDeleteAction.Text = "この動作を削除";
             this.btnDeleteAction.UseVisualStyleBackColor = true;
             // 
             // num_delay
@@ -723,7 +519,29 @@
             this.label18.TabIndex = 7;
             this.label18.Text = "遅延(ms):";
             // 
-            // ProfileManager
+            // panel_config_accIr
+            // 
+            this.panel_config_accIr.Controls.Add(this.picBox_wii_accIr);
+            this.panel_config_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_config_accIr.Location = new System.Drawing.Point(3, 3);
+            this.panel_config_accIr.Name = "panel_config_accIr";
+            this.panel_config_accIr.Padding = new System.Windows.Forms.Padding(10);
+            this.panel_config_accIr.Size = new System.Drawing.Size(488, 414);
+            this.panel_config_accIr.TabIndex = 3;
+            // 
+            // picBox_wii_accIr
+            // 
+            this.picBox_wii_accIr.BackColor = System.Drawing.Color.Transparent;
+            this.picBox_wii_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picBox_wii_accIr.Enabled = false;
+            this.picBox_wii_accIr.Location = new System.Drawing.Point(10, 10);
+            this.picBox_wii_accIr.Name = "picBox_wii_accIr";
+            this.picBox_wii_accIr.Size = new System.Drawing.Size(468, 394);
+            this.picBox_wii_accIr.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picBox_wii_accIr.TabIndex = 1;
+            this.picBox_wii_accIr.TabStop = false;
+            // 
+            // Profiler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -733,9 +551,9 @@
             this.Controls.Add(this.menuStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MainMenuStrip = this.menuStrip;
-            this.Name = "ProfileManager";
-            this.Text = "ProfileManager";
-            this.Load += new System.EventHandler(this.ProfileManager_Load);
+            this.Name = "Profiler";
+            this.Text = "Wiizard Profiler";
+            this.Load += new System.EventHandler(this.Profiler_Load);
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
@@ -752,11 +570,12 @@
             this.panel_config_wiiimg.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).EndInit();
             this.tabPage_AccIR.ResumeLayout(false);
-            this.tabPage_AccIR.PerformLayout();
             this.tabPage_advconfig.ResumeLayout(false);
             this.tabPage_advconfig.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).EndInit();
+            this.panel_config_accIr.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -781,26 +600,6 @@
         private System.Windows.Forms.Panel panel_config_wiiimg;
         private System.Windows.Forms.PictureBox picBox_wii;
         private System.Windows.Forms.TabPage tabPage_AccIR;
-        private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox combo_ir_y;
-        private System.Windows.Forms.ComboBox combo_ir_x;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox combo_nunchuk_joy_y;
-        private System.Windows.Forms.ComboBox combo_nunchuk_joy_x;
-        private System.Windows.Forms.ComboBox combo_nunchuk_acc_y;
-        private System.Windows.Forms.ComboBox combo_nunchuk_acc_x;
-        private System.Windows.Forms.ComboBox combo_acc_y;
-        private System.Windows.Forms.ComboBox combo_acc_x;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TabPage tabPage_advconfig;
@@ -821,8 +620,11 @@
         private System.Windows.Forms.RadioButton radioBtn_key;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Button btnChange;
+        private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnDeleteAction;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Panel panel_config_accIr;
+        private System.Windows.Forms.PictureBox picBox_wii_accIr;
     }
 }
 

@@ -10,7 +10,11 @@ namespace wiizard.Behaviors
         public List<WiimoteModel> GetDisabledItem() => new List<WiimoteModel>
         {
             WiimoteModel.N_STICK_X,
-            WiimoteModel.N_STICK_Y
+            WiimoteModel.N_STICK_Y,
+            WiimoteModel.N_STICK_UP,
+            WiimoteModel.N_STICK_DOWN,
+            WiimoteModel.N_STICK_LEFT,
+            WiimoteModel.N_STICK_RIGHT
         };        
 
         public string GetName() => "Minecraft";

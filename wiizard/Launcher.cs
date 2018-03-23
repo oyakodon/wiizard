@@ -13,14 +13,14 @@ using System.IO;
 
 namespace wiizard
 {
-    public partial class MainForm : Form
+    public partial class Launcher : Form
     {
-        public MainForm()
+        public Launcher()
         {
             InitializeComponent();
         }
 
-        public void MainForm_Load(object sender, EventArgs e)
+        public void Launcher_Load(object sender, EventArgs e)
         {
             prevState = new WiimoteState();
             m_vkcodes = new VKCodes();
@@ -116,7 +116,7 @@ namespace wiizard
 
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void Launcher_FormClosing(object sender, FormClosingEventArgs e)
         {
             m_wm.Disconnect();
         }
@@ -563,7 +563,7 @@ namespace wiizard
 
         private void MenuItem_EditProfile_Click(object sender, EventArgs e)
         {
-            var pmgr = new ProfileManager();
+            var pmgr = new Profiler();
             this.Hide();
             pmgr.ShowDialog();
             LoadProfiles();

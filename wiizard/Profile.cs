@@ -38,8 +38,13 @@ namespace wiizard
         /// <summary>
         /// JSONにシリアライズして保存します。
         /// </summary>
-        public void Save(string path)
+        public void Save(string path = null)
         {
+            if (path == null)
+            {
+                path = _path;
+            }
+
             var json = JsonConvert.SerializeObject(this, new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,

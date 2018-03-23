@@ -12,17 +12,22 @@ using System.Drawing;
 
 namespace wiizard
 {
-    public partial class ProfileManager : Form
+    public partial class Profiler : Form
     {
-        public ProfileManager()
+        public Profiler()
         {
             InitializeComponent();
         }
 
-        public void ProfileManager_Load(object sender, EventArgs e)
+        public void Profiler_Load(object sender, EventArgs e)
         {
             m_vkcodes = new VKCodes();
             m_profiles = new List<Profile>();
+
+            // ModelRect
+            m_dic_buttonRect = new Dictionary<WiimoteModel, Rectangle>();
+            m_dic_accIrRect = new Dictionary<WiimoteModel, Rectangle>();
+            ReadRectFromCsv(csv: Properties.Resources.modelRect);
 
             // Behavior
             m_bMgr = new BehaviorManager();
@@ -100,7 +105,17 @@ namespace wiizard
 
         private BehaviorManager m_bMgr;
 
-        private void LoadProfiles()
+        private Dictionary<WiimoteModel, Rectangle> m_dic_buttonRect;
+        private Dictionary<WiimoteModel, Rectangle> m_dic_accIrRect;
+
+        private Point? m_mousePos = null;
+
+
+
+        /// <summary>
+        /// プロファイルを読み込み、UIを更新します
+        /// </summary>
+        private void LoadProfiles(int idx = 0)
         {
             Thread.Sleep(100); // ファイルアクセス衝突防止
             m_profiles.Clear();
@@ -126,8 +141,96 @@ namespace wiizard
             {
                 listBox_profile.Items.Add(p.Name);
             }
-            listBox_profile.SelectedIndex = 0;
+            listBox_profile.SelectedIndex = idx;
 
+        }
+
+        /// <summary>
+        /// 画像上のボタンの座標をCSVから読み込みます
+        /// </summary>
+        private void ReadRectFromCsv(string csv)
+        {
+            foreach(var line in csv.Split('\n'))
+            {
+                if (string.IsNullOrEmpty(line))
+                {
+                    continue;
+                }
+
+                var sp = line.Split(',');
+                var model = (WiimoteModel)Enum.Parse(typeof(WiimoteModel), sp[0]);
+                var rect = new Rectangle(int.Parse(sp[2]), int.Parse(sp[3]), int.Parse(sp[4]), int.Parse(sp[5]));
+
+                if (int.Parse(sp[1]) == (int)ModelType.Button)
+                {
+                    m_dic_buttonRect.Add(model, rect);
+                }
+                else
+                {
+                    m_dic_accIrRect.Add(model, rect);
+                }
+            }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            // プロファイルの保存
+            m_selectedProfile.Save();
+
+            MessageBox.Show("プロファイルは正常に保存されました。", "Wiizard", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void btnApply_Click(object sender, EventArgs e)
+        {
+            // 変更をm_selectedProfileに反映
+            
+            if (!m_mousePos.HasValue || !m_dic_buttonRect.Values.Any(x => x.Contains(m_mousePos.Value)))
+            {
+                return;
+            }
+
+            var selectedModel = m_dic_buttonRect.First(x => x.Value.Contains(m_mousePos.Value)).Key;
+            
+
+
+        }
+
+        private void radioButtons_CheckedChanged(object sender, EventArgs e)
+        {
+            combo_key.Enabled = false;
+            combo_mouse.Enabled = false;
+
+            combo_modKey.Enabled = false;
+            num_value.Enabled = false;
+
+            if (radioBtn_key.Checked)
+            {
+                combo_key.Enabled = true;
+                combo_modKey.Enabled = true;
+            }
+            else if (radioBtn_mouse.Checked)
+            {
+                combo_mouse.Enabled = true;
+                num_value.Enabled = true;
+            }
+        }
+
+        private void combo_models_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel_config_wiiimg_MouseClick(object sender, MouseEventArgs e)
+        {
+            var pos = e.Location;
+            pos.Offset(-10, -10);
+
+            var disabled = m_bMgr.GetBehavior(m_selectedProfile.Behavior).GetDisabledItem();
+            if (m_dic_buttonRect.Any(x => !disabled.Contains(x.Key) && x.Value.Contains(pos)))
+            {
+                m_mousePos = pos;
+                picBox_wii.Refresh();
+            }
         }
 
         private void MenuItem_Readme_Click(object sender, EventArgs e)
@@ -174,111 +277,65 @@ namespace wiizard
 
         private void listBox_profile_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var dlg = MessageBox.Show("プロファイルへの変更内容を保存しますか？", "Wiizard", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (dlg == DialogResult.Yes)
+            {
+                btnSave.PerformClick();
+            }
+
             m_selectedProfile = m_profiles[(sender as ListBox).SelectedIndex];
 
-            //// 現在の設定をUIに適用
-            //foreach (var combo in m_dic_combos.SelectMany(i => i.Value))
-            //{
-            //    var model = m_dic_combos.First(i => i.Value.Contains(combo)).Key;
-
-            //}
-
-            //// Behaviorで指定されたものを無効化
-            //var disabledItem = m_behavior.GetDisabledItem();
-            //foreach (var p in m_dic_combos)
-            //{
-            //    foreach(var combo in p.Value)
-            //    {
-            //        if (disabledItem.Contains(p.Key))
-            //        {
-            //            combo.Enabled = false;
-            //            combo.Text = "無し";
-            //        }
-            //        else
-            //        {
-            //            combo.Enabled = true;
-            //        }
-            //    }
-            //}
+            // 現在の設定をUIに適用
+            m_mousePos = null;
+            picBox_wii.Refresh();
         }
 
-        private void btnRun_Click(object sender, EventArgs e)
+        private void picBox_wii_Paint(object sender, PaintEventArgs e)
         {
-            //// プロファイル変更の保存
-            //var newProfile = new Profile();
-            //newProfile.Name = m_selectedProfile.Name;
-            //newProfile.Behavior = m_bMgr.GetBehavior(combo_behavior.Text, true).GetName();
-            //newProfile.ActionAssignments = new Dictionary<WiimoteModel, List<ActionAttribute>>();
+            picBox_wii.Image = picBox_wii.InitialImage;
 
-            //foreach (var combo in m_dic_combos.SelectMany(i => i.Value))
-            //{
-            //    var attr = new ActionAttribute();
-            //    var model = m_dic_combos.First(i => i.Value.Contains(combo)).Key;
+            var g = e.Graphics;
 
-            //    if (!check_UseNunchuk.Checked && m_combos_nunchuk.Contains(combo))
-            //    {
-            //        continue;
-            //    }
+            var fill_normal = Color.FromArgb(64, Color.Orange);
+            var fill_selected = Color.FromArgb(128, SystemColors.Highlight);
+            var fill_assigned = Color.FromArgb(128, Color.LawnGreen);
+            var fill_disabled = Color.FromArgb(128, Color.LightGray);
 
-            //    if ((combo.Name.Contains("Joy") && !check_JoyAsButton.Checked) || (combo.Name.Contains("joy") && !check_JoyAsButton.Checked))
-            //    {
-            //        continue;
-            //    }
+            var disabled = m_bMgr.GetBehavior(m_selectedProfile.Behavior).GetDisabledItem();
 
-            //    if (m_dic_mouseAction.ContainsKey(combo.Text))
-            //    {
-            //        attr.Type = ActionType.Mouse;
-            //        attr.MouseAction = m_dic_mouseAction[combo.Text];
-            //    }
-            //    else
-            //    {
-            //        attr.Type = ActionType.Keyboard;
-            //        attr.Key = combo.Text;
-            //    }
-
-            //    newProfile.ActionAssignments.Add(model, new List<ActionAttribute> { attr });
-            //}
-
-            //newProfile.Save(newProfile._path);
-            
-        }
-
-        private void panel_config_wiiimg_MouseUp(object sender, MouseEventArgs e)
-        {
-            var rect = new Rectangle(55, 33, 17, 24);
-            if (rect.Contains(e.Location))
+            foreach (var item in m_dic_buttonRect)
             {
-                var g = picBox_wii.CreateGraphics();
-                g.DrawRectangle(new Pen(Brushes.Black), rect);
-                g.Dispose();
-            }
-            labStat.Text = $"({e.X},{e.Y})";
-        }
-
-        private void radioButtons_CheckedChanged(object sender, EventArgs e)
-        {
-            combo_key.Enabled = false;
-            combo_mouse.Enabled = false;
-
-            combo_modKey.Enabled = false;
-            num_value.Enabled = false;
-
-            if (radioBtn_key.Checked)
-            {
-                combo_key.Enabled = true;
-                combo_modKey.Enabled = true;
-            }
-            else if (radioBtn_mouse.Checked)
-            {
-                combo_mouse.Enabled = true;
-                num_value.Enabled = true;
+                var rect = item.Value;
+                var fillColor = fill_normal;
+                var pen = new Pen(Color.Black, 2);
+                
+                if (disabled.Contains(item.Key))
+                {
+                    fillColor = fill_disabled;
+                    pen = new Pen(Color.Black, 2);
+                    pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
+                } else if (m_mousePos.HasValue && rect.Contains(m_mousePos.Value))
+                {
+                    fillColor = fill_selected;
+                    pen = new Pen(SystemColors.Highlight, 4);
+                } else if (m_selectedProfile.ActionAssignments.ContainsKey(item.Key))
+                {
+                    fillColor = fill_assigned;
+                    pen = new Pen(Color.Green, 2);
+                }
+                
+                g.FillRectangle(new SolidBrush(fillColor), rect);
+                g.DrawRectangle(pen, rect);
             }
         }
 
-        private void combo_models_SelectedIndexChanged(object sender, EventArgs e)
-        {
+    }
 
-        }
+    public enum ModelType : int
+    {
+        Button = 0,
+        AccIR = 1
     }
 
 }

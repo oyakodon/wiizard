@@ -1,6 +1,6 @@
 ﻿namespace wiizard
 {
-    partial class MainForm
+    partial class Launcher
     {
         /// <summary>
         /// Required designer variable.
@@ -33,6 +33,7 @@
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuItem_Profile = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_EditProfile = new System.Windows.Forms.ToolStripMenuItem();
+            this.MenuItem_autoReload = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.MenuItem_Help = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_debugInfo = new System.Windows.Forms.ToolStripMenuItem();
@@ -40,7 +41,6 @@
             this.MenuItem_Version = new System.Windows.Forms.ToolStripMenuItem();
             this.btnRun = new System.Windows.Forms.Button();
             this.labName = new System.Windows.Forms.Label();
-            this.MenuItem_autoReload = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -89,6 +89,14 @@
             this.MenuItem_EditProfile.Tag = "Invulnerable";
             this.MenuItem_EditProfile.Text = "プロファイルの編集(&E)";
             this.MenuItem_EditProfile.Click += new System.EventHandler(this.MenuItem_EditProfile_Click);
+            // 
+            // MenuItem_autoReload
+            // 
+            this.MenuItem_autoReload.Name = "MenuItem_autoReload";
+            this.MenuItem_autoReload.Size = new System.Drawing.Size(200, 22);
+            this.MenuItem_autoReload.Tag = "Invulnerable";
+            this.MenuItem_autoReload.Text = "プロファイルの変更検知(&A)";
+            this.MenuItem_autoReload.Click += new System.EventHandler(this.MenuItem_autoReload_Click);
             // 
             // toolStripSeparator1
             // 
@@ -148,15 +156,7 @@
             this.labName.Text = "(未選択)";
             this.labName.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // MenuItem_autoReload
-            // 
-            this.MenuItem_autoReload.Name = "MenuItem_autoReload";
-            this.MenuItem_autoReload.Size = new System.Drawing.Size(200, 22);
-            this.MenuItem_autoReload.Tag = "Invulnerable";
-            this.MenuItem_autoReload.Text = "プロファイルの変更検知(&A)";
-            this.MenuItem_autoReload.Click += new System.EventHandler(this.MenuItem_autoReload_Click);
-            // 
-            // MainForm
+            // Launcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -165,9 +165,9 @@
             this.Controls.Add(this.btnRun);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
-            this.Name = "MainForm";
-            this.Text = "Wiizard";
-            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Name = "Launcher";
+            this.Text = "Wiizard Launcher";
+            this.Load += new System.EventHandler(this.Launcher_Load);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.menuStrip.ResumeLayout(false);
