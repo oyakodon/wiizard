@@ -56,6 +56,8 @@
             this.check_useJoyAsBtn = new System.Windows.Forms.CheckBox();
             this.picBox_wii = new System.Windows.Forms.PictureBox();
             this.tabPage_AccIR = new System.Windows.Forms.TabPage();
+            this.panel_config_accIr = new System.Windows.Forms.Panel();
+            this.picBox_wii_accIr = new System.Windows.Forms.PictureBox();
             this.tabPage_advconfig = new System.Windows.Forms.TabPage();
             this.btnDeleteAction = new System.Windows.Forms.Button();
             this.num_delay = new System.Windows.Forms.NumericUpDown();
@@ -69,8 +71,6 @@
             this.combo_models = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.panel_config_accIr = new System.Windows.Forms.Panel();
-            this.picBox_wii_accIr = new System.Windows.Forms.PictureBox();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.panel_profile.SuspendLayout();
@@ -83,11 +83,11 @@
             this.panel_config_wiiimg.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).BeginInit();
             this.tabPage_AccIR.SuspendLayout();
+            this.panel_config_accIr.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).BeginInit();
             this.tabPage_advconfig.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).BeginInit();
-            this.panel_config_accIr.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -304,6 +304,7 @@
             this.btnApply.TabIndex = 15;
             this.btnApply.Text = "適用(&A)";
             this.btnApply.UseVisualStyleBackColor = true;
+            this.btnApply.Click += new System.EventHandler(this.btnApply_Click);
             // 
             // tabControl_config
             // 
@@ -362,7 +363,6 @@
             this.picBox_wii.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picBox_wii.TabIndex = 1;
             this.picBox_wii.TabStop = false;
-            this.picBox_wii.Paint += new System.Windows.Forms.PaintEventHandler(this.picBox_wii_Paint);
             // 
             // tabPage_AccIR
             // 
@@ -374,6 +374,28 @@
             this.tabPage_AccIR.Size = new System.Drawing.Size(494, 420);
             this.tabPage_AccIR.TabIndex = 1;
             this.tabPage_AccIR.Text = "加速度・IR";
+            // 
+            // panel_config_accIr
+            // 
+            this.panel_config_accIr.Controls.Add(this.picBox_wii_accIr);
+            this.panel_config_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel_config_accIr.Location = new System.Drawing.Point(3, 3);
+            this.panel_config_accIr.Name = "panel_config_accIr";
+            this.panel_config_accIr.Padding = new System.Windows.Forms.Padding(10);
+            this.panel_config_accIr.Size = new System.Drawing.Size(488, 414);
+            this.panel_config_accIr.TabIndex = 3;
+            // 
+            // picBox_wii_accIr
+            // 
+            this.picBox_wii_accIr.BackColor = System.Drawing.Color.Transparent;
+            this.picBox_wii_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picBox_wii_accIr.Enabled = false;
+            this.picBox_wii_accIr.Location = new System.Drawing.Point(10, 10);
+            this.picBox_wii_accIr.Name = "picBox_wii_accIr";
+            this.picBox_wii_accIr.Size = new System.Drawing.Size(468, 394);
+            this.picBox_wii_accIr.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picBox_wii_accIr.TabIndex = 1;
+            this.picBox_wii_accIr.TabStop = false;
             // 
             // tabPage_advconfig
             // 
@@ -519,28 +541,6 @@
             this.label18.TabIndex = 7;
             this.label18.Text = "遅延(ms):";
             // 
-            // panel_config_accIr
-            // 
-            this.panel_config_accIr.Controls.Add(this.picBox_wii_accIr);
-            this.panel_config_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_config_accIr.Location = new System.Drawing.Point(3, 3);
-            this.panel_config_accIr.Name = "panel_config_accIr";
-            this.panel_config_accIr.Padding = new System.Windows.Forms.Padding(10);
-            this.panel_config_accIr.Size = new System.Drawing.Size(488, 414);
-            this.panel_config_accIr.TabIndex = 3;
-            // 
-            // picBox_wii_accIr
-            // 
-            this.picBox_wii_accIr.BackColor = System.Drawing.Color.Transparent;
-            this.picBox_wii_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picBox_wii_accIr.Enabled = false;
-            this.picBox_wii_accIr.Location = new System.Drawing.Point(10, 10);
-            this.picBox_wii_accIr.Name = "picBox_wii_accIr";
-            this.picBox_wii_accIr.Size = new System.Drawing.Size(468, 394);
-            this.picBox_wii_accIr.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picBox_wii_accIr.TabIndex = 1;
-            this.picBox_wii_accIr.TabStop = false;
-            // 
             // Profiler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -570,12 +570,12 @@
             this.panel_config_wiiimg.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).EndInit();
             this.tabPage_AccIR.ResumeLayout(false);
+            this.panel_config_accIr.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).EndInit();
             this.tabPage_advconfig.ResumeLayout(false);
             this.tabPage_advconfig.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).EndInit();
-            this.panel_config_accIr.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

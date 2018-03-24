@@ -68,7 +68,7 @@ namespace wiizard
 
             // マウス
             combo_mouse.Items.AddRange(m_dic_mouseAction.Keys.ToArray());
-            
+
 
             // 装飾キー
             combo_modKey.Items.AddRange(m_dic_modKeys.Keys.ToArray());
@@ -110,7 +110,7 @@ namespace wiizard
 
         private Point? m_mousePos = null;
 
-
+        private bool m_profileChanged = false;
 
         /// <summary>
         /// プロファイルを読み込み、UIを更新します
@@ -150,7 +150,7 @@ namespace wiizard
         /// </summary>
         private void ReadRectFromCsv(string csv)
         {
-            foreach(var line in csv.Split('\n'))
+            foreach (var line in csv.Split('\n'))
             {
                 if (string.IsNullOrEmpty(line))
                 {
@@ -158,6 +158,13 @@ namespace wiizard
                 }
 
                 var sp = line.Split(',');
+
+                // For debug!
+                if (int.Parse(sp[1]) == (int)ModelType.AccIR)
+                {
+                    continue;
+                }
+
                 var model = (WiimoteModel)Enum.Parse(typeof(WiimoteModel), sp[0]);
                 var rect = new Rectangle(int.Parse(sp[2]), int.Parse(sp[3]), int.Parse(sp[4]), int.Parse(sp[5]));
 
@@ -183,15 +190,31 @@ namespace wiizard
         private void btnApply_Click(object sender, EventArgs e)
         {
             // 変更をm_selectedProfileに反映
-            
+
             if (!m_mousePos.HasValue || !m_dic_buttonRect.Values.Any(x => x.Contains(m_mousePos.Value)))
             {
                 return;
             }
 
             var selectedModel = m_dic_buttonRect.First(x => x.Value.Contains(m_mousePos.Value)).Key;
-            
 
+            MessageBox.Show(tabControl_config.SelectedIndex + "");
+
+            if (radioBtn_key.Checked)
+            {
+
+            }
+            else if (radioBtn_mouse.Checked)
+            {
+
+            }
+            else
+            {
+                // None
+
+            }
+
+            m_profileChanged = true;
 
         }
 
@@ -229,7 +252,7 @@ namespace wiizard
             if (m_dic_buttonRect.Any(x => !disabled.Contains(x.Key) && x.Value.Contains(pos)))
             {
                 m_mousePos = pos;
-                picBox_wii.Refresh();
+                picBox_wii_Paint();
             }
         }
 
@@ -277,25 +300,31 @@ namespace wiizard
 
         private void listBox_profile_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var dlg = MessageBox.Show("プロファイルへの変更内容を保存しますか？", "Wiizard", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (dlg == DialogResult.Yes)
+            if (m_profileChanged)
             {
-                btnSave.PerformClick();
+                var dlg = MessageBox.Show("プロファイルへの変更内容を保存しますか？", "Wiizard", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+                if (dlg == DialogResult.Yes)
+                {
+                    btnSave.PerformClick();
+                }
+
+                m_profileChanged = false;
             }
 
             m_selectedProfile = m_profiles[(sender as ListBox).SelectedIndex];
 
             // 現在の設定をUIに適用
             m_mousePos = null;
-            picBox_wii.Refresh();
+            picBox_wii_Paint();
+            
         }
 
-        private void picBox_wii_Paint(object sender, PaintEventArgs e)
+        private void picBox_wii_Paint()
         {
             picBox_wii.Image = picBox_wii.InitialImage;
 
-            var g = e.Graphics;
+            var g = picBox_wii.CreateGraphics();
 
             var fill_normal = Color.FromArgb(64, Color.Orange);
             var fill_selected = Color.FromArgb(128, SystemColors.Highlight);
@@ -309,25 +338,31 @@ namespace wiizard
                 var rect = item.Value;
                 var fillColor = fill_normal;
                 var pen = new Pen(Color.Black, 2);
-                
+
                 if (disabled.Contains(item.Key))
                 {
                     fillColor = fill_disabled;
                     pen = new Pen(Color.Black, 2);
                     pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-                } else if (m_mousePos.HasValue && rect.Contains(m_mousePos.Value))
+                }
+                else if (m_mousePos.HasValue && rect.Contains(m_mousePos.Value))
                 {
                     fillColor = fill_selected;
                     pen = new Pen(SystemColors.Highlight, 4);
-                } else if (m_selectedProfile.ActionAssignments.ContainsKey(item.Key))
+                }
+                else if (m_selectedProfile.ActionAssignments.ContainsKey(item.Key))
                 {
                     fillColor = fill_assigned;
                     pen = new Pen(Color.Green, 2);
                 }
-                
+
                 g.FillRectangle(new SolidBrush(fillColor), rect);
                 g.DrawRectangle(pen, rect);
             }
+
+            
+            g.Dispose();
+            
         }
 
     }
