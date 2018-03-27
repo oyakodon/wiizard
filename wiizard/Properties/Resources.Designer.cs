@@ -61,23 +61,51 @@ namespace wiizard.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A,36,104,37,38,,,,
-        ///B,152,48,45,67,,,,
-        ///Plus,11,175,20,21,,,,
-        ///Minus,78,175,20,21,,,,
-        ///Home,44,175,20,21,,,,
-        ///One,40,274,29,30,,,,
-        ///Two,40,312,29,30,,,,
-        ///Up,45,19,17,26,,,,
-        ///Down,45,62,17,26,,,,
-        ///Left,20,45,25,17,,,,
-        ///Right,62,45,25,17,,,,
-        ///N_Z,386,122,61,47,,,,
-        ///N_C,398,82,35,36,,,,
-        ///N_STICK_UP,277,60,35,36,,,,
-        ///N_STICK_DOWN,277,137,35,36,,,,
-        ///N_STICK_LEFT,240,100,35,36,,,,
-        ///N_STICK_RIGHT,314,100,35,36,,,,
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap figure_wiimote {
+            get {
+                object obj = ResourceManager.GetObject("figure_wiimote", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap figure_wiimote_accIR {
+            get {
+                object obj = ResourceManager.GetObject("figure_wiimote_accIR", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A,0,64,180,66,66
+        ///B,0,271,83,80,116
+        ///Plus,0,19,303,36,36
+        ///Minus,0,139,303,36,36
+        ///Home,0,79,303,36,36
+        ///One,0,71,475,52,52
+        ///Two,0,71,541,52,52
+        ///Up,0,81,33,30,45
+        ///Down,0,81,108,30,45
+        ///Left,0,36,78,45,30
+        ///Right,0,111,78,45,30
+        ///N_Z,0,687,211,108,82
+        ///N_C,0,710,142,62,62
+        ///N_STICK_UP,0,493,105,62,62
+        ///N_STICK_DOWN,0,493,237,62,62
+        ///N_STICK_LEFT,0,427,173,62,62
+        ///N_STICK_RIGHT,0,560,173,62,62
+        ///N_STICK_X,1,,,,
+        ///N_STICK_Y,1,,,,
+        ///IR_X,1,,,,
+        ///IR_Y,1,,,,
+        ///ACC_X,1,,,,
+        ///ACC_Y,1,,,,
+        ///N_ACC_X,1,,,,
+        ///N_ACC_Y,1,,,,
         ///.
         /// </summary>
         internal static string modelRect {

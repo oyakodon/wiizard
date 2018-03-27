@@ -28,7 +28,7 @@ namespace wiizard
             m_dic_buttonRect = new Dictionary<WiimoteModel, Rectangle>();
             m_dic_accIrRect = new Dictionary<WiimoteModel, Rectangle>();
             ReadRectFromCsv(csv: Properties.Resources.modelRect);
-
+            
             // Behavior
             m_bMgr = new BehaviorManager();
             m_bMgr.Add(new StandardBehavior());
@@ -73,11 +73,13 @@ namespace wiizard
             // 装飾キー
             combo_modKey.Items.AddRange(m_dic_modKeys.Keys.ToArray());
 
-            combo_models.Items.AddRange(Enum.GetNames(typeof(WiimoteModel)).ToArray());
-
             #endregion
 
             LoadProfiles();
+
+            // 詳細タブ
+            combo_models.Items.AddRange(Enum.GetNames(typeof(WiimoteModel)).ToArray());
+            combo_models.SelectedIndex = 0;
 
         }
 
@@ -190,15 +192,21 @@ namespace wiizard
         private void btnApply_Click(object sender, EventArgs e)
         {
             // 変更をm_selectedProfileに反映
+            WiimoteModel selectedModel;
 
-            if (!m_mousePos.HasValue || !m_dic_buttonRect.Values.Any(x => x.Contains(m_mousePos.Value)))
+            if (tabControl_config.SelectedIndex != 2)
             {
-                return;
+                if (!m_mousePos.HasValue || !m_dic_buttonRect.Values.Any(x => x.Contains(m_mousePos.Value)))
+                {
+                    return;
+                }
+
+                selectedModel = m_dic_buttonRect.First(x => x.Value.Contains(m_mousePos.Value)).Key;
+            } else
+            {
+                // 「詳細」タブの時
+                selectedModel = (WiimoteModel)Enum.Parse(typeof(WiimoteModel), combo_models.SelectedItem.ToString());
             }
-
-            var selectedModel = m_dic_buttonRect.First(x => x.Value.Contains(m_mousePos.Value)).Key;
-
-            MessageBox.Show(tabControl_config.SelectedIndex + "");
 
             if (radioBtn_key.Checked)
             {
@@ -240,13 +248,28 @@ namespace wiizard
 
         private void combo_models_SelectedIndexChanged(object sender, EventArgs e)
         {
+            var selectedModel = (WiimoteModel)Enum.Parse(typeof(WiimoteModel), combo_models.SelectedItem.ToString());
+            listBox_actions.Items.Clear();
 
+            if (m_selectedProfile.ActionAssignments.ContainsKey(selectedModel))
+            {
+                foreach (var act in m_selectedProfile.ActionAssignments[selectedModel])
+                {
+                    string context;
+                    context = act.Delay.GetValueOrDefault(defaultValue: 0) + " ";
+                    context += (act.Type == ActionType.Keyboard) ? "<Key> " + act.Key : "<Mouse> " + act.MouseAction.Value.ToString();
+
+                    listBox_actions.Items.Add(context);
+                }
+            }
         }
 
         private void panel_config_wiiimg_MouseClick(object sender, MouseEventArgs e)
         {
             var pos = e.Location;
             pos.Offset(-10, -10);
+            pos = GetImagePos(picBox_wii, pos);
+            labStat.Text = $"Button: {pos.X},{pos.Y}";
 
             var disabled = m_bMgr.GetBehavior(m_selectedProfile.Behavior).GetDisabledItem();
             if (m_dic_buttonRect.Any(x => !disabled.Contains(x.Key) && x.Value.Contains(pos)))
@@ -317,14 +340,12 @@ namespace wiizard
             // 現在の設定をUIに適用
             m_mousePos = null;
             picBox_wii_Paint();
-            
         }
 
         private void picBox_wii_Paint()
         {
-            picBox_wii.Image = picBox_wii.InitialImage;
-
-            var g = picBox_wii.CreateGraphics();
+            var img = (Image)picBox_wii.InitialImage.Clone();
+            var g = Graphics.FromImage(img);
 
             var fill_normal = Color.FromArgb(64, Color.Orange);
             var fill_selected = Color.FromArgb(128, SystemColors.Highlight);
@@ -360,9 +381,60 @@ namespace wiizard
                 g.DrawRectangle(pen, rect);
             }
 
-            
             g.Dispose();
+            picBox_wii.Image = img;
+
+        }
+
+        private void tabControl_config_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            btnApply.Text = (tabControl_config.SelectedIndex == 2) ? "追加(&A)" : "適用(&A)";
+        }
+
+        private void listBox_actions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var selectedModel = (WiimoteModel)Enum.Parse(typeof(WiimoteModel), combo_models.SelectedItem.ToString());
+            var selected = m_selectedProfile.ActionAssignments[selectedModel][listBox_actions.SelectedIndex];
+            if (selected.Type == ActionType.Keyboard)
+            {
+                radioBtn_key.Checked = true;
+                combo_modKey.Enabled = true;
+            }
+            else
+            {
+                radioBtn_mouse.Checked = true;
+            }
+
+            num_delay.Value = selected.Delay.GetValueOrDefault(defaultValue: 0);
+            num_value.Enabled = selected.Value.HasValue;
+            num_value.Value = selected.Value.GetValueOrDefault(defaultValue: 0);
+
+            check_inc.Checked = selected.Incremental.GetValueOrDefault(defaultValue: false);
+        }
+
+        private void panel_config_accIr_MouseClick(object sender, MouseEventArgs e)
+        {
+            var pos = e.Location;
+            pos.Offset(-10, -10);
+            pos = GetImagePos(picBox_wii_accIr, pos);
+            labStat.Text = $"AccIR: {pos.X},{pos.Y}";
+        }
+
+        private Point GetImagePos(PictureBox picBox, Point mPos)
+        {
+            int W = picBox.Image.Width;
+            int H = picBox.Image.Height;
+
+            var imgScale = Math.Min((double)picBox.Width / W, (double)picBox.Height / H);
             
+            var imgX = (picBox.Width - (W * imgScale)) / 2.0;
+            var imgY = (picBox.Height - (H * imgScale)) / 2.0;
+
+            var ret = new Point();
+            ret.X = (int)((mPos.X - imgX) / imgScale);
+            ret.Y = (int)((mPos.Y - imgY) / imgScale);
+
+            return ret;
         }
 
     }

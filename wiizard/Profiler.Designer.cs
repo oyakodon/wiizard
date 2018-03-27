@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Profiler));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.MenuItem_File = new System.Windows.Forms.ToolStripMenuItem();
             this.MenuItem_newProfile = new System.Windows.Forms.ToolStripMenuItem();
@@ -316,6 +315,7 @@
             this.tabControl_config.SelectedIndex = 0;
             this.tabControl_config.Size = new System.Drawing.Size(502, 446);
             this.tabControl_config.TabIndex = 2;
+            this.tabControl_config.SelectedIndexChanged += new System.EventHandler(this.tabControl_config_SelectedIndexChanged);
             // 
             // tabPage_buttons
             // 
@@ -355,12 +355,12 @@
             this.picBox_wii.BackColor = System.Drawing.Color.Transparent;
             this.picBox_wii.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picBox_wii.Enabled = false;
-            this.picBox_wii.Image = ((System.Drawing.Image)(resources.GetObject("picBox_wii.Image")));
-            this.picBox_wii.InitialImage = ((System.Drawing.Image)(resources.GetObject("picBox_wii.InitialImage")));
+            this.picBox_wii.Image = global::wiizard.Properties.Resources.figure_wiimote;
+            this.picBox_wii.InitialImage = global::wiizard.Properties.Resources.figure_wiimote;
             this.picBox_wii.Location = new System.Drawing.Point(10, 10);
             this.picBox_wii.Name = "picBox_wii";
             this.picBox_wii.Size = new System.Drawing.Size(468, 394);
-            this.picBox_wii.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picBox_wii.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picBox_wii.TabIndex = 1;
             this.picBox_wii.TabStop = false;
             // 
@@ -384,16 +384,19 @@
             this.panel_config_accIr.Padding = new System.Windows.Forms.Padding(10);
             this.panel_config_accIr.Size = new System.Drawing.Size(488, 414);
             this.panel_config_accIr.TabIndex = 3;
+            this.panel_config_accIr.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel_config_accIr_MouseClick);
             // 
             // picBox_wii_accIr
             // 
             this.picBox_wii_accIr.BackColor = System.Drawing.Color.Transparent;
             this.picBox_wii_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picBox_wii_accIr.Enabled = false;
+            this.picBox_wii_accIr.Image = global::wiizard.Properties.Resources.figure_wiimote_accIR;
+            this.picBox_wii_accIr.InitialImage = global::wiizard.Properties.Resources.figure_wiimote_accIR;
             this.picBox_wii_accIr.Location = new System.Drawing.Point(10, 10);
             this.picBox_wii_accIr.Name = "picBox_wii_accIr";
             this.picBox_wii_accIr.Size = new System.Drawing.Size(468, 394);
-            this.picBox_wii_accIr.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picBox_wii_accIr.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.picBox_wii_accIr.TabIndex = 1;
             this.picBox_wii_accIr.TabStop = false;
             // 
@@ -421,7 +424,7 @@
             // 
             // btnDeleteAction
             // 
-            this.btnDeleteAction.Location = new System.Drawing.Point(170, 164);
+            this.btnDeleteAction.Location = new System.Drawing.Point(261, 165);
             this.btnDeleteAction.Name = "btnDeleteAction";
             this.btnDeleteAction.Size = new System.Drawing.Size(171, 26);
             this.btnDeleteAction.TabIndex = 23;
@@ -430,7 +433,7 @@
             // 
             // num_delay
             // 
-            this.num_delay.Location = new System.Drawing.Point(273, 85);
+            this.num_delay.Location = new System.Drawing.Point(364, 86);
             this.num_delay.Maximum = new decimal(new int[] {
             86400000,
             0,
@@ -443,7 +446,7 @@
             // check_inc
             // 
             this.check_inc.AutoSize = true;
-            this.check_inc.Location = new System.Drawing.Point(170, 118);
+            this.check_inc.Location = new System.Drawing.Point(261, 119);
             this.check_inc.Name = "check_inc";
             this.check_inc.Size = new System.Drawing.Size(92, 16);
             this.check_inc.TabIndex = 26;
@@ -453,7 +456,7 @@
             // num_value
             // 
             this.num_value.Enabled = false;
-            this.num_value.Location = new System.Drawing.Point(273, 60);
+            this.num_value.Location = new System.Drawing.Point(364, 61);
             this.num_value.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -473,7 +476,7 @@
             this.combo_modKey.DropDownWidth = 120;
             this.combo_modKey.Enabled = false;
             this.combo_modKey.FormattingEnabled = true;
-            this.combo_modKey.Location = new System.Drawing.Point(273, 33);
+            this.combo_modKey.Location = new System.Drawing.Point(364, 34);
             this.combo_modKey.Name = "combo_modKey";
             this.combo_modKey.Size = new System.Drawing.Size(79, 20);
             this.combo_modKey.TabIndex = 15;
@@ -481,7 +484,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(168, 373);
+            this.label13.Location = new System.Drawing.Point(259, 374);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(31, 12);
             this.label13.TabIndex = 23;
@@ -491,7 +494,7 @@
             // 
             this.combo_behavior.DropDownWidth = 150;
             this.combo_behavior.FormattingEnabled = true;
-            this.combo_behavior.Location = new System.Drawing.Point(244, 370);
+            this.combo_behavior.Location = new System.Drawing.Point(335, 371);
             this.combo_behavior.Name = "combo_behavior";
             this.combo_behavior.Size = new System.Drawing.Size(108, 20);
             this.combo_behavior.TabIndex = 22;
@@ -502,13 +505,14 @@
             this.listBox_actions.ItemHeight = 12;
             this.listBox_actions.Location = new System.Drawing.Point(16, 48);
             this.listBox_actions.Name = "listBox_actions";
-            this.listBox_actions.Size = new System.Drawing.Size(120, 352);
+            this.listBox_actions.Size = new System.Drawing.Size(210, 352);
             this.listBox_actions.TabIndex = 11;
+            this.listBox_actions.SelectedIndexChanged += new System.EventHandler(this.listBox_actions_SelectedIndexChanged);
             // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(168, 62);
+            this.label21.Location = new System.Drawing.Point(259, 63);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(19, 12);
             this.label21.TabIndex = 9;
@@ -526,7 +530,7 @@
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(168, 36);
+            this.label17.Location = new System.Drawing.Point(259, 37);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(51, 12);
             this.label17.TabIndex = 6;
@@ -535,7 +539,7 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(168, 87);
+            this.label18.Location = new System.Drawing.Point(259, 88);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(54, 12);
             this.label18.TabIndex = 7;
