@@ -56,6 +56,9 @@
             this.picBox_wii = new System.Windows.Forms.PictureBox();
             this.tabPage_AccIR = new System.Windows.Forms.TabPage();
             this.panel_config_accIr = new System.Windows.Forms.Panel();
+            this.picBox_rotateDirX = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.picBox_wii_accIr = new System.Windows.Forms.PictureBox();
             this.tabPage_advconfig = new System.Windows.Forms.TabPage();
             this.btnDeleteAction = new System.Windows.Forms.Button();
@@ -70,6 +73,7 @@
             this.combo_models = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
+            this.picBox_rotateDirY = new System.Windows.Forms.PictureBox();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.panel_profile.SuspendLayout();
@@ -83,10 +87,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).BeginInit();
             this.tabPage_AccIR.SuspendLayout();
             this.panel_config_accIr.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_rotateDirX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).BeginInit();
             this.tabPage_advconfig.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_rotateDirY)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -377,6 +383,10 @@
             // 
             // panel_config_accIr
             // 
+            this.panel_config_accIr.Controls.Add(this.picBox_rotateDirY);
+            this.panel_config_accIr.Controls.Add(this.picBox_rotateDirX);
+            this.panel_config_accIr.Controls.Add(this.label2);
+            this.panel_config_accIr.Controls.Add(this.label1);
             this.panel_config_accIr.Controls.Add(this.picBox_wii_accIr);
             this.panel_config_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_config_accIr.Location = new System.Drawing.Point(3, 3);
@@ -385,6 +395,35 @@
             this.panel_config_accIr.Size = new System.Drawing.Size(488, 414);
             this.panel_config_accIr.TabIndex = 3;
             this.panel_config_accIr.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel_config_accIr_MouseClick);
+            // 
+            // picBox_rotateDirX
+            // 
+            this.picBox_rotateDirX.BackColor = System.Drawing.Color.Transparent;
+            this.picBox_rotateDirX.Image = global::wiizard.Properties.Resources.figure_wiimote_dir;
+            this.picBox_rotateDirX.InitialImage = global::wiizard.Properties.Resources.figure_wiimote_dir;
+            this.picBox_rotateDirX.Location = new System.Drawing.Point(47, 277);
+            this.picBox_rotateDirX.Name = "picBox_rotateDirX";
+            this.picBox_rotateDirX.Size = new System.Drawing.Size(57, 50);
+            this.picBox_rotateDirX.TabIndex = 4;
+            this.picBox_rotateDirX.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(130, 203);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(12, 12);
+            this.label2.TabIndex = 3;
+            this.label2.Text = "Y";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(72, 330);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(12, 12);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "X";
             // 
             // picBox_wii_accIr
             // 
@@ -545,6 +584,17 @@
             this.label18.TabIndex = 7;
             this.label18.Text = "遅延(ms):";
             // 
+            // picBox_rotateDirY
+            // 
+            this.picBox_rotateDirY.BackColor = System.Drawing.Color.Transparent;
+            this.picBox_rotateDirY.Image = global::wiizard.Properties.Resources.figure_wiimote_dir;
+            this.picBox_rotateDirY.InitialImage = global::wiizard.Properties.Resources.figure_wiimote_dir;
+            this.picBox_rotateDirY.Location = new System.Drawing.Point(88, 171);
+            this.picBox_rotateDirY.Name = "picBox_rotateDirY";
+            this.picBox_rotateDirY.Size = new System.Drawing.Size(37, 50);
+            this.picBox_rotateDirY.TabIndex = 5;
+            this.picBox_rotateDirY.TabStop = false;
+            // 
             // Profiler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -575,11 +625,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).EndInit();
             this.tabPage_AccIR.ResumeLayout(false);
             this.panel_config_accIr.ResumeLayout(false);
+            this.panel_config_accIr.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_rotateDirX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).EndInit();
             this.tabPage_advconfig.ResumeLayout(false);
             this.tabPage_advconfig.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picBox_rotateDirY)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -629,6 +682,10 @@
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Panel panel_config_accIr;
         private System.Windows.Forms.PictureBox picBox_wii_accIr;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.PictureBox picBox_rotateDirX;
+        private System.Windows.Forms.PictureBox picBox_rotateDirY;
     }
 }
 

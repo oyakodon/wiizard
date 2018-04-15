@@ -119,6 +119,7 @@
   <ItemGroup>
     <None Include="Resources\figure_wiimote_accIR.png" />
     <None Include="Resources\figure_wiimote.png" />
+    <None Include="Resources\figure_wiimote_dir.png" />
     <Content Include="WiimoteLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

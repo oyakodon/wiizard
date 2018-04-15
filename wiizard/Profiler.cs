@@ -28,7 +28,7 @@ namespace wiizard
             m_dic_buttonRect = new Dictionary<WiimoteModel, Rectangle>();
             m_dic_accIrRect = new Dictionary<WiimoteModel, Rectangle>();
             ReadRectFromCsv(csv: Properties.Resources.modelRect);
-            
+
             // Behavior
             m_bMgr = new BehaviorManager();
             m_bMgr.Add(new StandardBehavior());
@@ -81,6 +81,15 @@ namespace wiizard
             combo_models.Items.AddRange(Enum.GetNames(typeof(WiimoteModel)).ToArray());
             combo_models.SelectedIndex = 0;
 
+            // 軸方向ボタン: 透明化
+            picBox_rotateDirX.Parent = picBox_wii_accIr;
+            picBox_rotateDirY.Parent = picBox_wii_accIr;
+
+            // 軸方向ボタン: X軸画像反転
+            var img = (Bitmap)picBox_rotateDirX.Image;
+            img.RotateFlip(RotateFlipType.Rotate90FlipNone);
+            picBox_rotateDirX.Image = img;
+
         }
 
         /// <summary>
@@ -113,6 +122,14 @@ namespace wiizard
         private Point? m_mousePos = null;
 
         private bool m_profileChanged = false;
+
+        private Point[][] m_rotateDirImageLocation = new Point[][]
+        {
+            new [] { new Point(47, 277), new Point(39, 277) }, /* X */
+            new [] { new Point(88, 171), new Point(88, 176) }  /* Y */
+        };
+
+        private int[] m_rotateDirImageState = new[] { 0, 0 }; /* X, Y */
 
         /// <summary>
         /// プロファイルを読み込み、UIを更新します
@@ -202,7 +219,8 @@ namespace wiizard
                 }
 
                 selectedModel = m_dic_buttonRect.First(x => x.Value.Contains(m_mousePos.Value)).Key;
-            } else
+            }
+            else
             {
                 // 「詳細」タブの時
                 selectedModel = (WiimoteModel)Enum.Parse(typeof(WiimoteModel), combo_models.SelectedItem.ToString());
@@ -269,7 +287,7 @@ namespace wiizard
             var pos = e.Location;
             pos.Offset(-10, -10);
             pos = GetImagePos(picBox_wii, pos);
-            labStat.Text = $"Button: {pos.X},{pos.Y}";
+            // labStat.Text = $"Button: {pos.X},{pos.Y}";
 
             var disabled = m_bMgr.GetBehavior(m_selectedProfile.Behavior).GetDisabledItem();
             if (m_dic_buttonRect.Any(x => !disabled.Contains(x.Key) && x.Value.Contains(pos)))
@@ -277,6 +295,25 @@ namespace wiizard
                 m_mousePos = pos;
                 picBox_wii_Paint();
             }
+
+            CheckRotateDirButtons(pos);
+        }
+
+
+        private void panel_config_accIr_MouseClick(object sender, MouseEventArgs e)
+        {
+            var pos = e.Location;
+            CheckRotateDirButtons(pos);
+            pos.Offset(-10, -10);
+            pos = GetImagePos(picBox_wii_accIr, pos);
+            // labStat.Text = $"AccIR: {pos.X},{pos.Y}";
+
+            //var disabled = m_bMgr.GetBehavior(m_selectedProfile.Behavior).GetDisabledItem();
+            //if (m_dic_buttonRect.Any(x => !disabled.Contains(x.Key) && x.Value.Contains(pos)))
+            //{
+            //    m_mousePos = pos;
+            //    picBox_wii_Paint();
+            //}
         }
 
         private void MenuItem_Readme_Click(object sender, EventArgs e)
@@ -412,21 +449,13 @@ namespace wiizard
             check_inc.Checked = selected.Incremental.GetValueOrDefault(defaultValue: false);
         }
 
-        private void panel_config_accIr_MouseClick(object sender, MouseEventArgs e)
-        {
-            var pos = e.Location;
-            pos.Offset(-10, -10);
-            pos = GetImagePos(picBox_wii_accIr, pos);
-            labStat.Text = $"AccIR: {pos.X},{pos.Y}";
-        }
-
         private Point GetImagePos(PictureBox picBox, Point mPos)
         {
             int W = picBox.Image.Width;
             int H = picBox.Image.Height;
 
             var imgScale = Math.Min((double)picBox.Width / W, (double)picBox.Height / H);
-            
+
             var imgX = (picBox.Width - (W * imgScale)) / 2.0;
             var imgY = (picBox.Height - (H * imgScale)) / 2.0;
 
@@ -435,6 +464,39 @@ namespace wiizard
             ret.Y = (int)((mPos.Y - imgY) / imgScale);
 
             return ret;
+        }
+
+        private void TransformRotateDirImage(PictureBox picBox)
+        {
+            var target = picBox == picBox_rotateDirX ? /* X */ 0 : /* Y */ 1;
+
+            // Flip
+            var img = (Bitmap)picBox.Image;
+            RotateFlipType type = target == 0 ? RotateFlipType.RotateNoneFlipX : RotateFlipType.RotateNoneFlipY;
+            img.RotateFlip(type);
+
+            // Set Location
+            var state = m_rotateDirImageState[target] == 0 ? 1 : 0; // Flip
+            m_rotateDirImageState[target] = state;
+            picBox.Image = img;
+            picBox.Location = m_rotateDirImageLocation[target][state];
+
+            picBox.Refresh();
+        }
+
+        private void CheckRotateDirButtons(Point mPos)
+        {
+            var rect_rotateDirX = new Rectangle(picBox_rotateDirX.Location, picBox_rotateDirX.Size);
+            var rect_rotateDirY = new Rectangle(picBox_rotateDirY.Location, picBox_rotateDirY.Size);
+
+            if (rect_rotateDirX.Contains(mPos))
+            {
+                TransformRotateDirImage(picBox_rotateDirX);
+            }
+            else if (rect_rotateDirY.Contains(mPos))
+            {
+                TransformRotateDirImage(picBox_rotateDirY);
+            }
         }
 
     }

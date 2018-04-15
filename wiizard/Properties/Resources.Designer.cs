@@ -81,6 +81,16 @@ namespace wiizard.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap figure_wiimote_dir {
+            get {
+                object obj = ResourceManager.GetObject("figure_wiimote_dir", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A,0,64,180,66,66
         ///B,0,271,83,80,116
         ///Plus,0,19,303,36,36
