@@ -63,29 +63,9 @@ namespace wiizard.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap figure_wiimote {
+        internal static System.Drawing.Bitmap fig_wiimote {
             get {
-                object obj = ResourceManager.GetObject("figure_wiimote", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap figure_wiimote_accIR {
-            get {
-                object obj = ResourceManager.GetObject("figure_wiimote_accIR", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap figure_wiimote_dir {
-            get {
-                object obj = ResourceManager.GetObject("figure_wiimote_dir", resourceCulture);
+                object obj = ResourceManager.GetObject("fig_wiimote", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

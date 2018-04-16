@@ -52,28 +52,20 @@
             this.tabControl_config = new System.Windows.Forms.TabControl();
             this.tabPage_buttons = new System.Windows.Forms.TabPage();
             this.panel_config_wiiimg = new System.Windows.Forms.Panel();
-            this.check_useJoyAsBtn = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.combo_behavior = new System.Windows.Forms.ComboBox();
             this.picBox_wii = new System.Windows.Forms.PictureBox();
-            this.tabPage_AccIR = new System.Windows.Forms.TabPage();
-            this.panel_config_accIr = new System.Windows.Forms.Panel();
-            this.picBox_rotateDirX = new System.Windows.Forms.PictureBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.picBox_wii_accIr = new System.Windows.Forms.PictureBox();
             this.tabPage_advconfig = new System.Windows.Forms.TabPage();
+            this.listBox_models = new System.Windows.Forms.ListBox();
             this.btnDeleteAction = new System.Windows.Forms.Button();
             this.num_delay = new System.Windows.Forms.NumericUpDown();
             this.check_inc = new System.Windows.Forms.CheckBox();
             this.num_value = new System.Windows.Forms.NumericUpDown();
             this.combo_modKey = new System.Windows.Forms.ComboBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.combo_behavior = new System.Windows.Forms.ComboBox();
             this.listBox_actions = new System.Windows.Forms.ListBox();
             this.label21 = new System.Windows.Forms.Label();
-            this.combo_models = new System.Windows.Forms.ComboBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
-            this.picBox_rotateDirY = new System.Windows.Forms.PictureBox();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.panel_profile.SuspendLayout();
@@ -85,14 +77,9 @@
             this.tabPage_buttons.SuspendLayout();
             this.panel_config_wiiimg.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).BeginInit();
-            this.tabPage_AccIR.SuspendLayout();
-            this.panel_config_accIr.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picBox_rotateDirX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).BeginInit();
             this.tabPage_advconfig.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picBox_rotateDirY)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -314,7 +301,6 @@
             // tabControl_config
             // 
             this.tabControl_config.Controls.Add(this.tabPage_buttons);
-            this.tabControl_config.Controls.Add(this.tabPage_AccIR);
             this.tabControl_config.Controls.Add(this.tabPage_advconfig);
             this.tabControl_config.Location = new System.Drawing.Point(3, 3);
             this.tabControl_config.Name = "tabControl_config";
@@ -336,7 +322,8 @@
             // 
             // panel_config_wiiimg
             // 
-            this.panel_config_wiiimg.Controls.Add(this.check_useJoyAsBtn);
+            this.panel_config_wiiimg.Controls.Add(this.label13);
+            this.panel_config_wiiimg.Controls.Add(this.combo_behavior);
             this.panel_config_wiiimg.Controls.Add(this.picBox_wii);
             this.panel_config_wiiimg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_config_wiiimg.Location = new System.Drawing.Point(3, 3);
@@ -346,23 +333,31 @@
             this.panel_config_wiiimg.TabIndex = 2;
             this.panel_config_wiiimg.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel_config_wiiimg_MouseClick);
             // 
-            // check_useJoyAsBtn
+            // label13
             // 
-            this.check_useJoyAsBtn.AutoSize = true;
-            this.check_useJoyAsBtn.Location = new System.Drawing.Point(267, 354);
-            this.check_useJoyAsBtn.Name = "check_useJoyAsBtn";
-            this.check_useJoyAsBtn.Size = new System.Drawing.Size(194, 16);
-            this.check_useJoyAsBtn.TabIndex = 25;
-            this.check_useJoyAsBtn.Text = "ジョイスティックをボタンとして使用する";
-            this.check_useJoyAsBtn.UseVisualStyleBackColor = true;
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(274, 354);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(31, 12);
+            this.label13.TabIndex = 25;
+            this.label13.Text = "挙動:";
+            // 
+            // combo_behavior
+            // 
+            this.combo_behavior.DropDownWidth = 150;
+            this.combo_behavior.FormattingEnabled = true;
+            this.combo_behavior.Location = new System.Drawing.Point(311, 351);
+            this.combo_behavior.Name = "combo_behavior";
+            this.combo_behavior.Size = new System.Drawing.Size(108, 20);
+            this.combo_behavior.TabIndex = 24;
             // 
             // picBox_wii
             // 
             this.picBox_wii.BackColor = System.Drawing.Color.Transparent;
             this.picBox_wii.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picBox_wii.Enabled = false;
-            this.picBox_wii.Image = global::wiizard.Properties.Resources.figure_wiimote;
-            this.picBox_wii.InitialImage = global::wiizard.Properties.Resources.figure_wiimote;
+            this.picBox_wii.Image = global::wiizard.Properties.Resources.fig_wiimote;
+            this.picBox_wii.InitialImage = global::wiizard.Properties.Resources.fig_wiimote;
             this.picBox_wii.Location = new System.Drawing.Point(10, 10);
             this.picBox_wii.Name = "picBox_wii";
             this.picBox_wii.Size = new System.Drawing.Size(468, 394);
@@ -370,88 +365,17 @@
             this.picBox_wii.TabIndex = 1;
             this.picBox_wii.TabStop = false;
             // 
-            // tabPage_AccIR
-            // 
-            this.tabPage_AccIR.BackColor = System.Drawing.Color.Transparent;
-            this.tabPage_AccIR.Controls.Add(this.panel_config_accIr);
-            this.tabPage_AccIR.Location = new System.Drawing.Point(4, 22);
-            this.tabPage_AccIR.Name = "tabPage_AccIR";
-            this.tabPage_AccIR.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage_AccIR.Size = new System.Drawing.Size(494, 420);
-            this.tabPage_AccIR.TabIndex = 1;
-            this.tabPage_AccIR.Text = "加速度・IR";
-            // 
-            // panel_config_accIr
-            // 
-            this.panel_config_accIr.Controls.Add(this.picBox_rotateDirY);
-            this.panel_config_accIr.Controls.Add(this.picBox_rotateDirX);
-            this.panel_config_accIr.Controls.Add(this.label2);
-            this.panel_config_accIr.Controls.Add(this.label1);
-            this.panel_config_accIr.Controls.Add(this.picBox_wii_accIr);
-            this.panel_config_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel_config_accIr.Location = new System.Drawing.Point(3, 3);
-            this.panel_config_accIr.Name = "panel_config_accIr";
-            this.panel_config_accIr.Padding = new System.Windows.Forms.Padding(10);
-            this.panel_config_accIr.Size = new System.Drawing.Size(488, 414);
-            this.panel_config_accIr.TabIndex = 3;
-            this.panel_config_accIr.MouseClick += new System.Windows.Forms.MouseEventHandler(this.panel_config_accIr_MouseClick);
-            // 
-            // picBox_rotateDirX
-            // 
-            this.picBox_rotateDirX.BackColor = System.Drawing.Color.Transparent;
-            this.picBox_rotateDirX.Image = global::wiizard.Properties.Resources.figure_wiimote_dir;
-            this.picBox_rotateDirX.InitialImage = global::wiizard.Properties.Resources.figure_wiimote_dir;
-            this.picBox_rotateDirX.Location = new System.Drawing.Point(47, 277);
-            this.picBox_rotateDirX.Name = "picBox_rotateDirX";
-            this.picBox_rotateDirX.Size = new System.Drawing.Size(57, 50);
-            this.picBox_rotateDirX.TabIndex = 4;
-            this.picBox_rotateDirX.TabStop = false;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(130, 203);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(12, 12);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Y";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(72, 330);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(12, 12);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "X";
-            // 
-            // picBox_wii_accIr
-            // 
-            this.picBox_wii_accIr.BackColor = System.Drawing.Color.Transparent;
-            this.picBox_wii_accIr.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picBox_wii_accIr.Enabled = false;
-            this.picBox_wii_accIr.Image = global::wiizard.Properties.Resources.figure_wiimote_accIR;
-            this.picBox_wii_accIr.InitialImage = global::wiizard.Properties.Resources.figure_wiimote_accIR;
-            this.picBox_wii_accIr.Location = new System.Drawing.Point(10, 10);
-            this.picBox_wii_accIr.Name = "picBox_wii_accIr";
-            this.picBox_wii_accIr.Size = new System.Drawing.Size(468, 394);
-            this.picBox_wii_accIr.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.picBox_wii_accIr.TabIndex = 1;
-            this.picBox_wii_accIr.TabStop = false;
-            // 
             // tabPage_advconfig
             // 
             this.tabPage_advconfig.BackColor = System.Drawing.Color.Transparent;
+            this.tabPage_advconfig.Controls.Add(this.listBox_models);
             this.tabPage_advconfig.Controls.Add(this.btnDeleteAction);
             this.tabPage_advconfig.Controls.Add(this.num_delay);
             this.tabPage_advconfig.Controls.Add(this.check_inc);
             this.tabPage_advconfig.Controls.Add(this.num_value);
             this.tabPage_advconfig.Controls.Add(this.combo_modKey);
-            this.tabPage_advconfig.Controls.Add(this.label13);
-            this.tabPage_advconfig.Controls.Add(this.combo_behavior);
             this.tabPage_advconfig.Controls.Add(this.listBox_actions);
             this.tabPage_advconfig.Controls.Add(this.label21);
-            this.tabPage_advconfig.Controls.Add(this.combo_models);
             this.tabPage_advconfig.Controls.Add(this.label17);
             this.tabPage_advconfig.Controls.Add(this.label18);
             this.tabPage_advconfig.Location = new System.Drawing.Point(4, 22);
@@ -461,9 +385,18 @@
             this.tabPage_advconfig.TabIndex = 2;
             this.tabPage_advconfig.Text = "詳細";
             // 
+            // listBox_models
+            // 
+            this.listBox_models.FormattingEnabled = true;
+            this.listBox_models.ItemHeight = 12;
+            this.listBox_models.Location = new System.Drawing.Point(15, 24);
+            this.listBox_models.Name = "listBox_models";
+            this.listBox_models.Size = new System.Drawing.Size(88, 376);
+            this.listBox_models.TabIndex = 28;
+            // 
             // btnDeleteAction
             // 
-            this.btnDeleteAction.Location = new System.Drawing.Point(261, 165);
+            this.btnDeleteAction.Location = new System.Drawing.Point(274, 165);
             this.btnDeleteAction.Name = "btnDeleteAction";
             this.btnDeleteAction.Size = new System.Drawing.Size(171, 26);
             this.btnDeleteAction.TabIndex = 23;
@@ -472,7 +405,7 @@
             // 
             // num_delay
             // 
-            this.num_delay.Location = new System.Drawing.Point(364, 86);
+            this.num_delay.Location = new System.Drawing.Point(377, 86);
             this.num_delay.Maximum = new decimal(new int[] {
             86400000,
             0,
@@ -485,7 +418,7 @@
             // check_inc
             // 
             this.check_inc.AutoSize = true;
-            this.check_inc.Location = new System.Drawing.Point(261, 119);
+            this.check_inc.Location = new System.Drawing.Point(274, 119);
             this.check_inc.Name = "check_inc";
             this.check_inc.Size = new System.Drawing.Size(92, 16);
             this.check_inc.TabIndex = 26;
@@ -495,7 +428,7 @@
             // num_value
             // 
             this.num_value.Enabled = false;
-            this.num_value.Location = new System.Drawing.Point(364, 61);
+            this.num_value.Location = new System.Drawing.Point(377, 61);
             this.num_value.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -515,61 +448,34 @@
             this.combo_modKey.DropDownWidth = 120;
             this.combo_modKey.Enabled = false;
             this.combo_modKey.FormattingEnabled = true;
-            this.combo_modKey.Location = new System.Drawing.Point(364, 34);
+            this.combo_modKey.Location = new System.Drawing.Point(377, 34);
             this.combo_modKey.Name = "combo_modKey";
             this.combo_modKey.Size = new System.Drawing.Size(79, 20);
             this.combo_modKey.TabIndex = 15;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(259, 374);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(31, 12);
-            this.label13.TabIndex = 23;
-            this.label13.Text = "挙動:";
-            // 
-            // combo_behavior
-            // 
-            this.combo_behavior.DropDownWidth = 150;
-            this.combo_behavior.FormattingEnabled = true;
-            this.combo_behavior.Location = new System.Drawing.Point(335, 371);
-            this.combo_behavior.Name = "combo_behavior";
-            this.combo_behavior.Size = new System.Drawing.Size(108, 20);
-            this.combo_behavior.TabIndex = 22;
             // 
             // listBox_actions
             // 
             this.listBox_actions.FormattingEnabled = true;
             this.listBox_actions.ItemHeight = 12;
-            this.listBox_actions.Location = new System.Drawing.Point(16, 48);
+            this.listBox_actions.Location = new System.Drawing.Point(109, 24);
             this.listBox_actions.Name = "listBox_actions";
-            this.listBox_actions.Size = new System.Drawing.Size(210, 352);
+            this.listBox_actions.Size = new System.Drawing.Size(144, 376);
             this.listBox_actions.TabIndex = 11;
             this.listBox_actions.SelectedIndexChanged += new System.EventHandler(this.listBox_actions_SelectedIndexChanged);
             // 
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(259, 63);
+            this.label21.Location = new System.Drawing.Point(272, 63);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(19, 12);
             this.label21.TabIndex = 9;
             this.label21.Text = "値:";
             // 
-            // combo_models
-            // 
-            this.combo_models.FormattingEnabled = true;
-            this.combo_models.Location = new System.Drawing.Point(15, 17);
-            this.combo_models.Name = "combo_models";
-            this.combo_models.Size = new System.Drawing.Size(121, 20);
-            this.combo_models.TabIndex = 9;
-            this.combo_models.SelectedIndexChanged += new System.EventHandler(this.combo_models_SelectedIndexChanged);
-            // 
             // label17
             // 
             this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(259, 37);
+            this.label17.Location = new System.Drawing.Point(272, 37);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(51, 12);
             this.label17.TabIndex = 6;
@@ -578,22 +484,11 @@
             // label18
             // 
             this.label18.AutoSize = true;
-            this.label18.Location = new System.Drawing.Point(259, 88);
+            this.label18.Location = new System.Drawing.Point(272, 88);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(54, 12);
             this.label18.TabIndex = 7;
             this.label18.Text = "遅延(ms):";
-            // 
-            // picBox_rotateDirY
-            // 
-            this.picBox_rotateDirY.BackColor = System.Drawing.Color.Transparent;
-            this.picBox_rotateDirY.Image = global::wiizard.Properties.Resources.figure_wiimote_dir;
-            this.picBox_rotateDirY.InitialImage = global::wiizard.Properties.Resources.figure_wiimote_dir;
-            this.picBox_rotateDirY.Location = new System.Drawing.Point(88, 171);
-            this.picBox_rotateDirY.Name = "picBox_rotateDirY";
-            this.picBox_rotateDirY.Size = new System.Drawing.Size(37, 50);
-            this.picBox_rotateDirY.TabIndex = 5;
-            this.picBox_rotateDirY.TabStop = false;
             // 
             // Profiler
             // 
@@ -623,16 +518,10 @@
             this.panel_config_wiiimg.ResumeLayout(false);
             this.panel_config_wiiimg.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picBox_wii)).EndInit();
-            this.tabPage_AccIR.ResumeLayout(false);
-            this.panel_config_accIr.ResumeLayout(false);
-            this.panel_config_accIr.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picBox_rotateDirX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picBox_wii_accIr)).EndInit();
             this.tabPage_advconfig.ResumeLayout(false);
             this.tabPage_advconfig.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picBox_rotateDirY)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -656,20 +545,15 @@
         private System.Windows.Forms.TabPage tabPage_buttons;
         private System.Windows.Forms.Panel panel_config_wiiimg;
         private System.Windows.Forms.PictureBox picBox_wii;
-        private System.Windows.Forms.TabPage tabPage_AccIR;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TabPage tabPage_advconfig;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.ListBox listBox_actions;
-        private System.Windows.Forms.ComboBox combo_models;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.ComboBox combo_behavior;
         private System.Windows.Forms.CheckBox check_inc;
         private System.Windows.Forms.NumericUpDown num_value;
         private System.Windows.Forms.ComboBox combo_modKey;
         private System.Windows.Forms.NumericUpDown num_delay;
-        private System.Windows.Forms.CheckBox check_useJoyAsBtn;
         private System.Windows.Forms.ComboBox combo_mouse;
         private System.Windows.Forms.ComboBox combo_key;
         private System.Windows.Forms.RadioButton radioBtn_none;
@@ -680,12 +564,9 @@
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnDeleteAction;
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Panel panel_config_accIr;
-        private System.Windows.Forms.PictureBox picBox_wii_accIr;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox picBox_rotateDirX;
-        private System.Windows.Forms.PictureBox picBox_rotateDirY;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ComboBox combo_behavior;
+        private System.Windows.Forms.ListBox listBox_models;
     }
 }
 

@@ -117,9 +117,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\figure_wiimote_accIR.png" />
-    <None Include="Resources\figure_wiimote.png" />
-    <None Include="Resources\figure_wiimote_dir.png" />
+    <None Include="Resources\fig_wiimote.png" />
     <Content Include="WiimoteLib.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
