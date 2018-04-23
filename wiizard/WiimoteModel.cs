@@ -19,7 +19,7 @@ namespace wiizard
         Right,
         N_Z,
         N_C,
-        _N_STICK,
+        _N_STICK, /* Joystickのダミーモデル */
         N_STICK_X,
         N_STICK_Y,
         N_STICK_UP,

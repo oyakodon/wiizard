@@ -41,13 +41,6 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.listBox_profile = new System.Windows.Forms.ListBox();
             this.btnSave = new System.Windows.Forms.Button();
-            this.combo_mouse = new System.Windows.Forms.ComboBox();
-            this.combo_key = new System.Windows.Forms.ComboBox();
-            this.radioBtn_none = new System.Windows.Forms.RadioButton();
-            this.radioBtn_mouse = new System.Windows.Forms.RadioButton();
-            this.radioBtn_key = new System.Windows.Forms.RadioButton();
-            this.label20 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
             this.btnApply = new System.Windows.Forms.Button();
             this.tabControl_config = new System.Windows.Forms.TabControl();
             this.tabPage_buttons = new System.Windows.Forms.TabPage();
@@ -66,6 +59,18 @@
             this.label21 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.label18 = new System.Windows.Forms.Label();
+            this.panel_setJoystick = new System.Windows.Forms.Panel();
+            this.radioBtn_JoyWASD = new System.Windows.Forms.RadioButton();
+            this.radioBtn_JoyMouse = new System.Windows.Forms.RadioButton();
+            this.radioBtn_JoyNone = new System.Windows.Forms.RadioButton();
+            this.panel_setKeyMouse = new System.Windows.Forms.Panel();
+            this.radioBtn_key = new System.Windows.Forms.RadioButton();
+            this.label16 = new System.Windows.Forms.Label();
+            this.combo_mouse = new System.Windows.Forms.ComboBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.combo_key = new System.Windows.Forms.ComboBox();
+            this.radioBtn_mouse = new System.Windows.Forms.RadioButton();
+            this.radioBtn_none = new System.Windows.Forms.RadioButton();
             this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.panel_profile.SuspendLayout();
@@ -80,6 +85,8 @@
             this.tabPage_advconfig.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).BeginInit();
+            this.panel_setJoystick.SuspendLayout();
+            this.panel_setKeyMouse.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -177,15 +184,10 @@
             // 
             this.splitContainer.Panel2.BackColor = System.Drawing.SystemColors.Control;
             this.splitContainer.Panel2.Controls.Add(this.btnSave);
-            this.splitContainer.Panel2.Controls.Add(this.combo_mouse);
-            this.splitContainer.Panel2.Controls.Add(this.combo_key);
-            this.splitContainer.Panel2.Controls.Add(this.radioBtn_none);
-            this.splitContainer.Panel2.Controls.Add(this.radioBtn_mouse);
-            this.splitContainer.Panel2.Controls.Add(this.radioBtn_key);
-            this.splitContainer.Panel2.Controls.Add(this.label20);
-            this.splitContainer.Panel2.Controls.Add(this.label16);
             this.splitContainer.Panel2.Controls.Add(this.btnApply);
             this.splitContainer.Panel2.Controls.Add(this.tabControl_config);
+            this.splitContainer.Panel2.Controls.Add(this.panel_setJoystick);
+            this.splitContainer.Panel2.Controls.Add(this.panel_setKeyMouse);
             this.splitContainer.Size = new System.Drawing.Size(929, 462);
             this.splitContainer.SplitterDistance = 196;
             this.splitContainer.TabIndex = 3;
@@ -213,80 +215,6 @@
             this.btnSave.Text = "設定ファイルに保存(&S)";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // combo_mouse
-            // 
-            this.combo_mouse.DropDownWidth = 120;
-            this.combo_mouse.Enabled = false;
-            this.combo_mouse.FormattingEnabled = true;
-            this.combo_mouse.Location = new System.Drawing.Point(614, 187);
-            this.combo_mouse.Name = "combo_mouse";
-            this.combo_mouse.Size = new System.Drawing.Size(79, 20);
-            this.combo_mouse.TabIndex = 22;
-            // 
-            // combo_key
-            // 
-            this.combo_key.DropDownWidth = 120;
-            this.combo_key.Enabled = false;
-            this.combo_key.FormattingEnabled = true;
-            this.combo_key.Location = new System.Drawing.Point(614, 106);
-            this.combo_key.Name = "combo_key";
-            this.combo_key.Size = new System.Drawing.Size(79, 20);
-            this.combo_key.TabIndex = 19;
-            // 
-            // radioBtn_none
-            // 
-            this.radioBtn_none.AutoSize = true;
-            this.radioBtn_none.Location = new System.Drawing.Point(521, 238);
-            this.radioBtn_none.Name = "radioBtn_none";
-            this.radioBtn_none.Size = new System.Drawing.Size(83, 16);
-            this.radioBtn_none.TabIndex = 21;
-            this.radioBtn_none.TabStop = true;
-            this.radioBtn_none.Text = "割り当てなし";
-            this.radioBtn_none.UseVisualStyleBackColor = true;
-            this.radioBtn_none.CheckedChanged += new System.EventHandler(this.radioButtons_CheckedChanged);
-            // 
-            // radioBtn_mouse
-            // 
-            this.radioBtn_mouse.AutoSize = true;
-            this.radioBtn_mouse.Location = new System.Drawing.Point(521, 164);
-            this.radioBtn_mouse.Name = "radioBtn_mouse";
-            this.radioBtn_mouse.Size = new System.Drawing.Size(50, 16);
-            this.radioBtn_mouse.TabIndex = 20;
-            this.radioBtn_mouse.TabStop = true;
-            this.radioBtn_mouse.Text = "マウス";
-            this.radioBtn_mouse.UseVisualStyleBackColor = true;
-            this.radioBtn_mouse.CheckedChanged += new System.EventHandler(this.radioButtons_CheckedChanged);
-            // 
-            // radioBtn_key
-            // 
-            this.radioBtn_key.AutoSize = true;
-            this.radioBtn_key.Location = new System.Drawing.Point(521, 84);
-            this.radioBtn_key.Name = "radioBtn_key";
-            this.radioBtn_key.Size = new System.Drawing.Size(72, 16);
-            this.radioBtn_key.TabIndex = 18;
-            this.radioBtn_key.TabStop = true;
-            this.radioBtn_key.Text = "キーボード";
-            this.radioBtn_key.UseVisualStyleBackColor = true;
-            this.radioBtn_key.CheckedChanged += new System.EventHandler(this.radioButtons_CheckedChanged);
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(550, 190);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(31, 12);
-            this.label20.TabIndex = 17;
-            this.label20.Text = "動作:";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(550, 109);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(27, 12);
-            this.label16.TabIndex = 16;
-            this.label16.Text = "キー:";
             // 
             // btnApply
             // 
@@ -318,7 +246,7 @@
             this.tabPage_buttons.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage_buttons.Size = new System.Drawing.Size(494, 420);
             this.tabPage_buttons.TabIndex = 0;
-            this.tabPage_buttons.Text = "ボタン";
+            this.tabPage_buttons.Text = "全般";
             // 
             // panel_config_wiiimg
             // 
@@ -490,6 +418,137 @@
             this.label18.TabIndex = 7;
             this.label18.Text = "遅延(ms):";
             // 
+            // panel_setJoystick
+            // 
+            this.panel_setJoystick.Controls.Add(this.radioBtn_JoyWASD);
+            this.panel_setJoystick.Controls.Add(this.radioBtn_JoyMouse);
+            this.panel_setJoystick.Controls.Add(this.radioBtn_JoyNone);
+            this.panel_setJoystick.Location = new System.Drawing.Point(507, 85);
+            this.panel_setJoystick.Name = "panel_setJoystick";
+            this.panel_setJoystick.Size = new System.Drawing.Size(214, 217);
+            this.panel_setJoystick.TabIndex = 25;
+            // 
+            // radioBtn_JoyWASD
+            // 
+            this.radioBtn_JoyWASD.AutoSize = true;
+            this.radioBtn_JoyWASD.Location = new System.Drawing.Point(21, 32);
+            this.radioBtn_JoyWASD.Name = "radioBtn_JoyWASD";
+            this.radioBtn_JoyWASD.Size = new System.Drawing.Size(88, 16);
+            this.radioBtn_JoyWASD.TabIndex = 25;
+            this.radioBtn_JoyWASD.TabStop = true;
+            this.radioBtn_JoyWASD.Text = "WASDに対応";
+            this.radioBtn_JoyWASD.UseVisualStyleBackColor = true;
+            // 
+            // radioBtn_JoyMouse
+            // 
+            this.radioBtn_JoyMouse.AutoSize = true;
+            this.radioBtn_JoyMouse.Location = new System.Drawing.Point(21, 97);
+            this.radioBtn_JoyMouse.Name = "radioBtn_JoyMouse";
+            this.radioBtn_JoyMouse.Size = new System.Drawing.Size(83, 16);
+            this.radioBtn_JoyMouse.TabIndex = 27;
+            this.radioBtn_JoyMouse.TabStop = true;
+            this.radioBtn_JoyMouse.Text = "マウスに対応";
+            this.radioBtn_JoyMouse.UseVisualStyleBackColor = true;
+            // 
+            // radioBtn_JoyNone
+            // 
+            this.radioBtn_JoyNone.AutoSize = true;
+            this.radioBtn_JoyNone.Location = new System.Drawing.Point(21, 158);
+            this.radioBtn_JoyNone.Name = "radioBtn_JoyNone";
+            this.radioBtn_JoyNone.Size = new System.Drawing.Size(83, 16);
+            this.radioBtn_JoyNone.TabIndex = 28;
+            this.radioBtn_JoyNone.TabStop = true;
+            this.radioBtn_JoyNone.Text = "割り当てなし";
+            this.radioBtn_JoyNone.UseVisualStyleBackColor = true;
+            // 
+            // panel_setKeyMouse
+            // 
+            this.panel_setKeyMouse.Controls.Add(this.radioBtn_key);
+            this.panel_setKeyMouse.Controls.Add(this.label16);
+            this.panel_setKeyMouse.Controls.Add(this.combo_mouse);
+            this.panel_setKeyMouse.Controls.Add(this.label20);
+            this.panel_setKeyMouse.Controls.Add(this.combo_key);
+            this.panel_setKeyMouse.Controls.Add(this.radioBtn_mouse);
+            this.panel_setKeyMouse.Controls.Add(this.radioBtn_none);
+            this.panel_setKeyMouse.Location = new System.Drawing.Point(507, 85);
+            this.panel_setKeyMouse.Name = "panel_setKeyMouse";
+            this.panel_setKeyMouse.Size = new System.Drawing.Size(214, 217);
+            this.panel_setKeyMouse.TabIndex = 24;
+            // 
+            // radioBtn_key
+            // 
+            this.radioBtn_key.AutoSize = true;
+            this.radioBtn_key.Location = new System.Drawing.Point(24, 26);
+            this.radioBtn_key.Name = "radioBtn_key";
+            this.radioBtn_key.Size = new System.Drawing.Size(72, 16);
+            this.radioBtn_key.TabIndex = 18;
+            this.radioBtn_key.TabStop = true;
+            this.radioBtn_key.Text = "キーボード";
+            this.radioBtn_key.UseVisualStyleBackColor = true;
+            this.radioBtn_key.CheckedChanged += new System.EventHandler(this.radioButtons_CheckedChanged);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(53, 51);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(27, 12);
+            this.label16.TabIndex = 16;
+            this.label16.Text = "キー:";
+            // 
+            // combo_mouse
+            // 
+            this.combo_mouse.DropDownWidth = 120;
+            this.combo_mouse.Enabled = false;
+            this.combo_mouse.FormattingEnabled = true;
+            this.combo_mouse.Location = new System.Drawing.Point(117, 129);
+            this.combo_mouse.Name = "combo_mouse";
+            this.combo_mouse.Size = new System.Drawing.Size(79, 20);
+            this.combo_mouse.TabIndex = 22;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Location = new System.Drawing.Point(53, 132);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(31, 12);
+            this.label20.TabIndex = 17;
+            this.label20.Text = "動作:";
+            // 
+            // combo_key
+            // 
+            this.combo_key.DropDownWidth = 120;
+            this.combo_key.Enabled = false;
+            this.combo_key.FormattingEnabled = true;
+            this.combo_key.Location = new System.Drawing.Point(117, 48);
+            this.combo_key.Name = "combo_key";
+            this.combo_key.Size = new System.Drawing.Size(79, 20);
+            this.combo_key.TabIndex = 19;
+            // 
+            // radioBtn_mouse
+            // 
+            this.radioBtn_mouse.AutoSize = true;
+            this.radioBtn_mouse.Location = new System.Drawing.Point(24, 106);
+            this.radioBtn_mouse.Name = "radioBtn_mouse";
+            this.radioBtn_mouse.Size = new System.Drawing.Size(50, 16);
+            this.radioBtn_mouse.TabIndex = 20;
+            this.radioBtn_mouse.TabStop = true;
+            this.radioBtn_mouse.Text = "マウス";
+            this.radioBtn_mouse.UseVisualStyleBackColor = true;
+            this.radioBtn_mouse.CheckedChanged += new System.EventHandler(this.radioButtons_CheckedChanged);
+            // 
+            // radioBtn_none
+            // 
+            this.radioBtn_none.AutoSize = true;
+            this.radioBtn_none.Location = new System.Drawing.Point(24, 180);
+            this.radioBtn_none.Name = "radioBtn_none";
+            this.radioBtn_none.Size = new System.Drawing.Size(83, 16);
+            this.radioBtn_none.TabIndex = 21;
+            this.radioBtn_none.TabStop = true;
+            this.radioBtn_none.Text = "割り当てなし";
+            this.radioBtn_none.UseVisualStyleBackColor = true;
+            this.radioBtn_none.CheckedChanged += new System.EventHandler(this.radioButtons_CheckedChanged);
+            // 
             // Profiler
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -510,7 +569,6 @@
             this.panel_profile.ResumeLayout(false);
             this.splitContainer.Panel1.ResumeLayout(false);
             this.splitContainer.Panel2.ResumeLayout(false);
-            this.splitContainer.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).EndInit();
             this.splitContainer.ResumeLayout(false);
             this.tabControl_config.ResumeLayout(false);
@@ -522,6 +580,10 @@
             this.tabPage_advconfig.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.num_delay)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.num_value)).EndInit();
+            this.panel_setJoystick.ResumeLayout(false);
+            this.panel_setJoystick.PerformLayout();
+            this.panel_setKeyMouse.ResumeLayout(false);
+            this.panel_setKeyMouse.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -567,6 +629,11 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ComboBox combo_behavior;
         private System.Windows.Forms.ListBox listBox_models;
+        private System.Windows.Forms.Panel panel_setJoystick;
+        private System.Windows.Forms.Panel panel_setKeyMouse;
+        private System.Windows.Forms.RadioButton radioBtn_JoyMouse;
+        private System.Windows.Forms.RadioButton radioBtn_JoyNone;
+        private System.Windows.Forms.RadioButton radioBtn_JoyWASD;
     }
 }
 

@@ -26,7 +26,7 @@ namespace wiizard
 
             // ModelRect
             m_dic_buttonRect = new Dictionary<WiimoteModel, Rectangle>();
-            ReadRectFromCsv(csv: Properties.Resources.modelRect);
+            ReadRectsFromCsv(csv: Properties.Resources.modelRect);
 
             // Behavior
             m_bMgr = new BehaviorManager();
@@ -57,6 +57,11 @@ namespace wiizard
             #region UIの初期化
             // RadioButton
             radioBtn_none.Checked = true;
+            radioBtn_JoyNone.Checked = true;
+
+            // 設定Panel
+            panel_setKeyMouse.Visible = true;
+            panel_setJoystick.Visible = false;
 
             // Behavior
             combo_behavior.Items.AddRange(m_bMgr.GetBehaviorNames().ToArray());
@@ -68,7 +73,6 @@ namespace wiizard
             // マウス
             combo_mouse.Items.AddRange(m_dic_mouseAction.Keys.ToArray());
 
-
             // 装飾キー
             combo_modKey.Items.AddRange(m_dic_modKeys.Keys.ToArray());
 
@@ -77,7 +81,7 @@ namespace wiizard
             LoadProfiles();
 
             // 詳細タブ
-            listBox_models.Items.AddRange(Enum.GetNames(typeof(WiimoteModel)).Where(x => x != "N_STICK").ToArray());
+            listBox_models.Items.AddRange(Enum.GetNames(typeof(WiimoteModel)).Where(x => x != "_N_STICK").ToArray());
             listBox_models.SelectedIndex = 0;
 
         }
@@ -148,7 +152,7 @@ namespace wiizard
         /// <summary>
         /// 画像上のボタンの座標をCSVから読み込みます
         /// </summary>
-        private void ReadRectFromCsv(string csv)
+        private void ReadRectsFromCsv(string csv)
         {
             foreach (var line in csv.Split('\n'))
             {
@@ -177,8 +181,9 @@ namespace wiizard
         {
             // 変更をm_selectedProfileに反映
             WiimoteModel selectedModel;
+            var appliedModels = new Dictionary<WiimoteModel, List<ActionAttribute>>();
 
-            if (tabControl_config.SelectedIndex != 1)
+            if (tabControl_config.SelectedIndex == 0)
             {
                 if (!m_mousePos.HasValue || !m_dic_buttonRect.Values.Any(x => x.Contains(m_mousePos.Value)))
                 {
@@ -193,19 +198,46 @@ namespace wiizard
                 selectedModel = (WiimoteModel)Enum.Parse(typeof(WiimoteModel), listBox_models.SelectedItem.ToString());
             }
 
-            if (radioBtn_key.Checked)
+            // Joystickが選択されている (全般タブで)
+            if (selectedModel == WiimoteModel._N_STICK)
             {
+                if (radioBtn_JoyWASD.Checked)
+                {
+                    // 上下左右をボタンとして使用、WASD割り当て
+                    appliedModels.Add(WiimoteModel.N_STICK_UP, new List<ActionAttribute>() { new ActionAttribute() });
+                } else if (radioBtn_JoyMouse.Checked)
+                {
+                    // 上下・左右で軸として使用、マウス軸割り当て
 
-            }
-            else if (radioBtn_mouse.Checked)
-            {
-
+                }
+                else
+                {
+                    // Noneが選択されている
+                    // nullを追加
+                    
+                }
             }
             else
             {
-                // None
+                if (radioBtn_key.Checked)
+                {
+                    // キーボード割り当て
 
+                }
+                else if (radioBtn_mouse.Checked)
+                {
+                    // マウスボタン割り当て
+
+                }
+                else
+                {
+                    // Noneが選択されている
+                    // nullを追加
+
+                }
             }
+
+            // Profileに反映すべきか？ (appliedModelsとActionAssignmentsを比較)
 
             m_profileChanged = true;
 
@@ -254,11 +286,14 @@ namespace wiizard
             var pos = e.Location;
             pos.Offset(-10, -10);
             pos = GetImagePos(picBox_wii, pos);
-            // labStat.Text = $"Button: {pos.X},{pos.Y}";
-
+            
             var disabled = m_bMgr.GetBehavior(m_selectedProfile.Behavior).GetDisabledItem();
             if (m_dic_buttonRect.Any(x => !disabled.Contains(x.Key) && x.Value.Contains(pos)))
             {
+                var joyIsVisible = m_dic_buttonRect[WiimoteModel._N_STICK].Contains(pos);
+                panel_setJoystick.Visible = joyIsVisible;
+                panel_setKeyMouse.Visible = !joyIsVisible;
+
                 m_mousePos = pos;
                 picBox_wii_Paint();
             }
